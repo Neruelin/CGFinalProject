@@ -6,7 +6,7 @@ var renderer = new WebGLRenderer();
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-scene.background = new Color( 0x0000ff );
+scene.background = new Color( 0xff00ff );
 
 function animate() {
 	requestAnimationFrame( animate );

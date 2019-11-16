@@ -7,10 +7,13 @@
     "three": "^0.110.0"
   },
   "devDependencies": {
+    "http-server": "^0.11.1",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   },
   "scripts": {
+    "webpackWatcher" : "npx webpack ./src/main.js --watch",
+    "start": "http-server -p 8080 ./dist -o http://127.0.0.1:8080/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
