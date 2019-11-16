@@ -12,14 +12,17 @@ import {
   PointLight
 } from "three";
 
-const background = 0x00ff00;
+import { OrbitControls } from "./OrbitControls";
 
-var scene,
+const background = 0x000000;
+
+let scene,
   camera,
   renderer,
+  controls,
   objects = [];
 
-var sI = 0;
+let sI = 0;
 
 const shapes = {
   sphere: sI++,
@@ -28,7 +31,7 @@ const shapes = {
   torus: sI++
 };
 
-var ObjectsToCreate = [
+let ObjectsToCreate = [
   {
     type: shapes.sphere,
     dims: {
@@ -37,11 +40,11 @@ var ObjectsToCreate = [
       heightSegments: 6
     },
     pos: {
-      x: 5,
-      y: 5,
-      z: 0
+      x: 1,
+      y: 1,
+      z: 1
     },
-    color: 0x00ffff
+    color: 0x00ff00
   },
   {
     type: shapes.cube,
@@ -49,51 +52,29 @@ var ObjectsToCreate = [
       size: 1
     },
     pos: {
-      x: 10,
-      y: 10,
+      x: 0,
+      y: 0,
       z: 0
     },
-    color: 0x00ff00
+    color: 0x0000ff
+  },
+  {
+    type: shapes.cube,
+    dims: {
+      size: 1
+    },
+    pos: {
+      x: 1,
+      y: 1,
+      z: 0
+    },
+    color: 0xff0000
   }
 ];
 
-init();
-
-function init() {
-  initCamera();
-  initRenderer();
-  initScene();
-  animate();
-}
-
-function initCamera() {
-  camera = new PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  camera.position.set(0, 5, 0);
-  camera.lookAt(10, 10, 0);
-  window.addEventListener("resize", onWindowResize, false);
-}
-
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-function initRenderer() {
-  renderer = new WebGLRenderer();
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-}
-
 function shapePipeline(spec) {
-  var geo;
-  var mat = new MeshBasicMaterial({ color: spec.color || 0xffffff });
+  let geo;
+  let mat = new MeshBasicMaterial({ color: spec.color });
   switch (spec.type) {
     case shapes.sphere:
       geo = new SphereBufferGeometry(
@@ -126,7 +107,40 @@ function shapePipeline(spec) {
       return undefined;
   }
 
-  return new Mesh(geo, mat);
+  let obj = new Mesh(geo, mat);
+
+  obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
+
+  return obj;
+}
+
+function initControls() {
+  controls = new OrbitControls(camera, renderer.domElement);
+}
+
+function initCamera() {
+  camera = new PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  camera.position.set(10, 10, 10);
+  camera.lookAt(0, 0, 0);
+  window.addEventListener("resize", onWindowResize, false);
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function initRenderer() {
+  renderer = new WebGLRenderer();
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
 }
 
 function initScene() {
@@ -144,11 +158,21 @@ function initScene() {
   let light = new PointLight(0xffffff, 1, 0, 0);
   light.position.set(50, 50, 50);
   scene.add(light);
-  console.log(scene);
 }
 
 function animate() {
   requestAnimationFrame(animate);
+  controls.update();
 
   renderer.render(scene, camera);
 }
+
+function init() {
+  initCamera();
+  initRenderer();
+  initControls();
+  initScene();
+  animate();
+}
+
+init();
