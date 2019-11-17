@@ -13,6 +13,7 @@ import {
 } from "three";
 
 import { OrbitControls } from "./OrbitControls";
+import STLLoader from "./STLLoader";
 
 const background = 0x000000;
 
@@ -154,6 +155,11 @@ function initScene() {
     objects.push(obj);
     scene.add(obj);
   }
+
+  let loader = new STLLoader();
+  loader.load('./assets/models/atlasv551.stl', function (geometry) {
+    scene.add(new Mesh(geometry));
+  });
 
   let light = new PointLight(0xffffff, 1, 0, 0);
   light.position.set(50, 50, 50);
