@@ -1,26 +1,25 @@
 import {
-  Scene,
-  PerspectiveCamera,
-  WebGLRenderer,
-  Color,
-  PointLight,
-  SphereBufferGeometry,
+  BackSide,
   BoxBufferGeometry,
-  PointLight,
-  TextureLoader,
+  Color,
   LinearFilter,
+  Mesh,
+  MeshBasicMaterial,
+  PerspectiveCamera,
+  PointLight,
+  Scene,
   ShaderLib,
   ShaderMaterial,
-  BackSide,
-  MeshBasicMaterial,
-  Mesh
+  SphereBufferGeometry,
+  TextureLoader,
+  WebGLRenderer
 } from "three";
 import { OrbitControls } from "./OrbitControls";
 import STLLoader from "./STLLoader";
 
-const background = 0x000000;
 import ObjectsToCreate from "./ObjectsToCreate";
 import shapePipeline from "./ShapePipeline";
+
 import { AU, radsPerSec, background, farOcclusionDistance } from "./constants";
 
 let scene,
@@ -84,36 +83,36 @@ function initScene() {
 
   let loader = new STLLoader();
   loader.load("./assets/models/atlasv551.stl", function(geometry) {
-    scene.add(new Mesh(geometry));
+    let mat = new MeshBasicMaterial({ color: 0xffffff });
+    scene.add(new Mesh(geometry, mat));
   });
 
   let light = new PointLight(0xffffff, 1, 0, 0);
-  light.position.set(1000, 1000, 1000);
+  light.position.set(0, 1000, 0);
   scene.add(light);
 
   let sky;
-  {
-    const textureLoader = new TextureLoader();
-    const skyTexture = textureLoader.load("./8k_stars_milky_way.jpg");
 
-    skyTexture.magFilter = LinearFilter;
-    skyTexture.minFilter = LinearFilter;
+  const textureLoader = new TextureLoader();
+  const skyTexture = textureLoader.load("./Assets/8k_stars_milky_way.jpg");
 
-    const shader = ShaderLib.equirect;
-    const shaderMat = new ShaderMaterial({
-      fragmentShader: shader.fragmentShader,
-      vertexShader: shader.vertexShader,
-      uniforms: shader.uniforms,
-      depthWrite: false,
-      side: BackSide
-    });
+  skyTexture.magFilter = LinearFilter;
+  skyTexture.minFilter = LinearFilter;
 
-    shaderMat.uniforms.tEquirect.value = skyTexture;
+  const shader = ShaderLib.equirect;
+  const shaderMat = new ShaderMaterial({
+    fragmentShader: shader.fragmentShader,
+    vertexShader: shader.vertexShader,
+    uniforms: shader.uniforms,
+    depthWrite: false,
+    side: BackSide
+  });
 
-    const plane = new BoxBufferGeometry(1000000000, 1000000000, 1000000000);
-    sky = new Mesh(plane, shaderMat);
-    scene.add(sky);
-  }
+  shaderMat.uniforms.tEquirect.value = skyTexture;
+
+  const plane = new BoxBufferGeometry(1000000000, 1000000000, 1000000000);
+  sky = new Mesh(plane, shaderMat);
+  scene.add(sky);
 }
 
 function updateObjectPositions() {

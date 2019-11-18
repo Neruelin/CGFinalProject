@@ -17,7 +17,7 @@
   "scripts": {
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open",
-    "build": "webpack",
+    "build": "webpack && xcopy /E /I .\\src\\assets .\\dist\\assets && xcopy /Y /E /I .\\dist .\\docs ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
