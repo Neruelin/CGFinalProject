@@ -9,7 +9,12 @@ import {
   BoxBufferGeometry,
   ConeBufferGeometry,
   TorusBufferGeometry,
-  PointLight
+  PointLight,
+  TextureLoader,
+  LinearFilter,
+  ShaderLib,
+  ShaderMaterial,
+  BackSide
 } from "three";
 
 import { OrbitControls } from "./OrbitControls";
@@ -124,7 +129,7 @@ function initCamera() {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    2000000000
   );
   camera.position.set(10, 10, 10);
   camera.lookAt(0, 0, 0);
@@ -164,6 +169,30 @@ function initScene() {
   let light = new PointLight(0xffffff, 1, 0, 0);
   light.position.set(50, 50, 50);
   scene.add(light);
+
+  let sky;
+  {
+    const textureLoader = new TextureLoader();
+    const skyTexture = textureLoader.load("./8k_stars_milky_way.jpg");
+
+    skyTexture.magFilter = LinearFilter;
+    skyTexture.minFilter = LinearFilter;
+
+    const shader = ShaderLib.equirect;
+    const shaderMat = new ShaderMaterial({
+      fragmentShader: shader.fragmentShader,
+      vertexShader: shader.vertexShader,
+      uniforms: shader.uniforms,
+      depthWrite: false,
+      side: BackSide
+    });
+
+    shaderMat.uniforms.tEquirect.value = skyTexture;
+
+    const plane = new BoxBufferGeometry(1000000000, 1000000000, 1000000000);
+    sky = new Mesh(plane, shaderMat);
+    scene.add(sky);
+  }
 }
 
 function animate() {
