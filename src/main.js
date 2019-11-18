@@ -94,7 +94,7 @@ function initScene() {
   let sky;
 
   const textureLoader = new TextureLoader();
-  const skyTexture = textureLoader.load("./Assets/8k_stars_milky_way.jpg");
+  const skyTexture = textureLoader.load("./assets/8k_stars_milky_way.jpg");
 
   skyTexture.magFilter = LinearFilter;
   skyTexture.minFilter = LinearFilter;
@@ -113,13 +113,6 @@ function initScene() {
   const plane = new BoxBufferGeometry(1000000000, 1000000000, 1000000000);
   sky = new Mesh(plane, shaderMat);
   scene.add(sky);
-}
-
-function updateObjectPositions() {
-  let pos = parametricEllipse(AU, AU, Date.now() - startTime);
-
-  Earth.position.x = pos.x;
-  Earth.position.z = pos.y;
 }
 
 function updateObjectPositions() {
