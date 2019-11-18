@@ -157,7 +157,7 @@ function initScene() {
   }
 
   let loader = new STLLoader();
-  loader.load('./assets/models/atlasv551.stl', function (geometry) {
+  loader.load("./assets/models/atlasv551.stl", function(geometry) {
     scene.add(new Mesh(geometry));
   });
 
