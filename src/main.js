@@ -122,6 +122,13 @@ function updateObjectPositions() {
   Earth.position.z = pos.y;
 }
 
+function updateObjectPositions() {
+  let pos = parametricEllipse(AU, AU, Date.now() - startTime);
+
+  Earth.position.x = pos.x;
+  Earth.position.z = pos.y;
+}
+
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
