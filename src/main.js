@@ -121,7 +121,7 @@ function initScene() {
 
   const plane = new BoxBufferGeometry(1000000000, 1000000000, 1000000000);
   sky = new Mesh(plane, shaderMat);
-  // scene.add(sky);
+  scene.add(sky);
 }
 
 function updateObjectPositions() {

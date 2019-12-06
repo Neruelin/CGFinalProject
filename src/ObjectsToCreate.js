@@ -148,6 +148,7 @@ export const SpaceObjects = {
   },
   Earth: {
     type: shapes.sphere,
+    texture: "./assets/2k_earth_daymap.jpg",
     dims: {
       radius: 6000,
       widthSegments: 8,
