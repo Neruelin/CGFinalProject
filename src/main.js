@@ -3,7 +3,6 @@ import {
   BackSide,
   BoxBufferGeometry,
   Color,
-  EllipseCurve,
   LinearFilter,
   Mesh,
   MeshBasicMaterial,
@@ -21,13 +20,7 @@ import STLLoader from "./STLLoader";
 import { Orbits, SpaceObjects } from "./ObjectsToCreate";
 import shapePipeline from "./ShapePipeline";
 
-import {
-  AU,
-  eccentricityFactor,
-  radsPerSec,
-  background,
-  farOcclusionDistance
-} from "./constants";
+import { AU, radsPerSec, background, farOcclusionDistance } from "./constants";
 
 let scene,
   camera,
@@ -146,12 +139,8 @@ function updateObjectPositions() {
       pos.x * Math.sin((Orbits[key].dims.OrbitalInclination * Math.PI) / 180);
     SpaceObjects[key].obj.position.x =
       pos.x * Math.cos((Orbits[key].dims.OrbitalInclination * Math.PI) / 180);
-    SpaceObjects[key].obj.position.z = pos.y;
-    // addAt(
-    //   SpaceObjects[key].obj.position.x,
-    //   SpaceObjects[key].obj.position.y,
-    //   SpaceObjects[key].obj.position.z
-    // );
+    SpaceObjects[key].obj.position.z =
+      pos.y + Orbits[key].dims.aphelion - Orbits[key].dims.perihelion;
   }
 }
 
@@ -177,7 +166,5 @@ function addAt(x, y, z) {
   mesh.position.set(x, y, z);
   scene.add(mesh);
 }
-console.log(addAt);
 
 init();
-console.log(SpaceObjects);

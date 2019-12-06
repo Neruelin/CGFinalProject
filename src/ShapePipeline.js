@@ -8,10 +8,22 @@ import {
   SphereBufferGeometry,
   Mesh,
   Line,
-  EllipseCurve
+  Points,
+  EllipseCurve,
+  Vector2
 } from "three";
 import shapes from "./Shapes";
 import { eccentricityFactor } from "./constants";
+
+function parametricEllipse(x = 0, y = 0, t, period, eccentricity) {
+  let major = x + y;
+  let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
+
+  return {
+    x: major * Math.cos((radsPerSec * t) / period),
+    y: minor * Math.sin((radsPerSec * t) / period)
+  };
+}
 
 const RadsPerDegree = Math.PI / 180;
 const RightAngle = Math.PI / 2;
