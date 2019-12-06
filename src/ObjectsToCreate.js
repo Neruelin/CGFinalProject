@@ -95,7 +95,8 @@ export const Orbits = {
       perihelion: 2.5577 * AU,
       aphelion: 2.9773 * AU,
       OrbitalInclination: 10.62,
-      period: 4.6
+      period: 4.6,
+      eccentricity: 0.08
     },
     color: 0xfffff0
   },
@@ -105,7 +106,8 @@ export const Orbits = {
       perihelion: 2.13061 * AU,
       aphelion: 3.41261 * AU,
       OrbitalInclination: 35.06,
-      period: 4.6
+      period: 4.6,
+      eccentricity: 0.2305
     },
     color: 0xffff00
   },
@@ -115,7 +117,8 @@ export const Orbits = {
       perihelion: 2.15 * AU,
       aphelion: 2.57 * AU,
       OrbitalInclination: 5.58,
-      period: 3.6
+      period: 3.6,
+      eccentricity: 0.09
     },
     color: 0xfff000
   },
@@ -135,7 +138,7 @@ export const SpaceObjects = {
   Sun: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 695.51,
       aphelionSegments: 8,
       heightSegments: 6
     },
@@ -149,7 +152,7 @@ export const SpaceObjects = {
   Earth: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 6.371,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -163,7 +166,7 @@ export const SpaceObjects = {
   Mars: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 3.3895,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -177,7 +180,7 @@ export const SpaceObjects = {
   Mercury: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 2.4397,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -188,11 +191,10 @@ export const SpaceObjects = {
     },
     color: 0xff0000
   },
-
   Venus: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 6.0518,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -203,11 +205,10 @@ export const SpaceObjects = {
     },
     color: 0xff0000
   },
-
   Jupiter: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 69.911,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -218,11 +219,10 @@ export const SpaceObjects = {
     },
     color: 0xff0000
   },
-
   Saturn: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 58.232,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -233,11 +233,10 @@ export const SpaceObjects = {
     },
     color: 0xff0000
   },
-
   Uranus: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 25.362,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -248,11 +247,10 @@ export const SpaceObjects = {
     },
     color: 0xff0000
   },
-
   Neptune: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 24.622,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -267,7 +265,7 @@ export const SpaceObjects = {
   Ceres: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 0.473,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -282,7 +280,7 @@ export const SpaceObjects = {
   Pallas: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 0.2725,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -297,7 +295,7 @@ export const SpaceObjects = {
   Vesta: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 0.2627,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -311,7 +309,7 @@ export const SpaceObjects = {
   Pluto: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 1.188,
       widthSegments: 8,
       heightSegments: 6
     },
