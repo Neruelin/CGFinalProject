@@ -11,6 +11,10 @@ import {
   EllipseCurve
 } from "three";
 import shapes from "./Shapes";
+import { eccentricityFactor } from "./constants";
+
+const RadsPerDegree = Math.PI / 180;
+const RightAngle = Math.PI / 2;
 
 export default function shapePipeline(spec) {
   let geo, obj;
@@ -44,11 +48,14 @@ export default function shapePipeline(spec) {
       );
       break;
     case shapes.ellipse:
+      let eccentricity = spec.dims.eccentricity | 0;
+      let major = spec.dims.aphelion + spec.dims.perihelion;
+      let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
       let curve = new EllipseCurve(
-        spec.dims.width - spec.dims.height,
+        spec.dims.aphelion - spec.dims.perihelion,
         0,
-        spec.dims.width,
-        spec.dims.height
+        minor,
+        major
       );
       let points = curve.getPoints(500);
       geo = new BufferGeometry().setFromPoints(points);
@@ -60,7 +67,9 @@ export default function shapePipeline(spec) {
 
   if (spec.type == shapes.ellipse) {
     obj = new Line(geo, mat);
-    obj.rotation.x = Math.PI / 2;
+    obj.rotation.x = RightAngle;
+    obj.rotation.y = spec.dims.OrbitalInclination * RadsPerDegree;
+    obj.rotation.z = RightAngle;
   } else {
     obj = new Mesh(geo, mat);
     obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);

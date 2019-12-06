@@ -1,7 +1,9 @@
 import {
+  AxisHelper,
   BackSide,
   BoxBufferGeometry,
   Color,
+  EllipseCurve,
   LinearFilter,
   Mesh,
   MeshBasicMaterial,
@@ -16,11 +18,16 @@ import {
 } from "three";
 import { OrbitControls } from "./OrbitControls";
 import STLLoader from "./STLLoader";
-
-import ObjectsToCreate from "./ObjectsToCreate";
+import { Orbits, SpaceObjects } from "./ObjectsToCreate";
 import shapePipeline from "./ShapePipeline";
 
-import { AU, radsPerSec, background, farOcclusionDistance } from "./constants";
+import {
+  AU,
+  eccentricityFactor,
+  radsPerSec,
+  background,
+  farOcclusionDistance
+} from "./constants";
 
 let scene,
   camera,
@@ -28,8 +35,6 @@ let scene,
   controls,
   startTime = Date.now(),
   objects = [];
-
-let Sun, Earth;
 
 function initControls() {
   controls = new OrbitControls(camera, renderer.domElement);
@@ -60,10 +65,13 @@ function initRenderer() {
   document.body.appendChild(renderer.domElement);
 }
 
-function parametricEllipse(x, y, t) {
+function parametricEllipse(x = 0, y = 0, t, period, eccentricity) {
+  let major = x + y;
+  let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
+
   return {
-    x: x * Math.cos(radsPerSec * t),
-    y: y * Math.sin(radsPerSec * t)
+    x: major * Math.cos((radsPerSec * t) / period),
+    y: minor * Math.sin((radsPerSec * t) / period)
   };
 }
 
@@ -72,11 +80,19 @@ function initScene() {
   scene.background = new Color(background);
   scene.add(camera);
 
+  let axes2 = new AxisHelper(1000000000);
+  scene.add(axes2);
+
   let key;
-  for (key of Object.keys(ObjectsToCreate)) {
-    let obj = shapePipeline(ObjectsToCreate[key]);
-    if (key === "Sun") Sun = obj;
-    if (key === "Earth") Earth = obj;
+  for (key of Object.keys(SpaceObjects)) {
+    let obj = shapePipeline(SpaceObjects[key]);
+    SpaceObjects[key].obj = obj;
+    objects.push(obj);
+    scene.add(obj);
+  }
+
+  for (key of Object.keys(Orbits)) {
+    let obj = shapePipeline(Orbits[key]);
     objects.push(obj);
     scene.add(obj);
   }
@@ -112,14 +128,31 @@ function initScene() {
 
   const plane = new BoxBufferGeometry(1000000000, 1000000000, 1000000000);
   sky = new Mesh(plane, shaderMat);
-  scene.add(sky);
+  // scene.add(sky);
 }
 
 function updateObjectPositions() {
-  let pos = parametricEllipse(AU, AU, Date.now() - startTime);
-
-  Earth.position.x = pos.x;
-  Earth.position.z = pos.y;
+  let key;
+  for (key of Object.keys(SpaceObjects)) {
+    if (key == "Sun") continue;
+    let pos = parametricEllipse(
+      Orbits[key].dims.perihelion,
+      Orbits[key].dims.aphelion,
+      Date.now() - startTime,
+      Orbits[key].dims.period,
+      Orbits[key].dims.eccentricity | 0
+    );
+    SpaceObjects[key].obj.position.y =
+      pos.x * Math.sin((Orbits[key].dims.OrbitalInclination * Math.PI) / 180);
+    SpaceObjects[key].obj.position.x =
+      pos.x * Math.cos((Orbits[key].dims.OrbitalInclination * Math.PI) / 180);
+    SpaceObjects[key].obj.position.z = pos.y;
+    // addAt(
+    //   SpaceObjects[key].obj.position.x,
+    //   SpaceObjects[key].obj.position.y,
+    //   SpaceObjects[key].obj.position.z
+    // );
+  }
 }
 
 function animate() {
@@ -147,3 +180,4 @@ function addAt(x, y, z) {
 console.log(addAt);
 
 init();
+console.log(SpaceObjects);
