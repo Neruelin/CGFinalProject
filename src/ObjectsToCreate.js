@@ -1,6 +1,5 @@
 import shapes from "./Shapes";
 import { AU } from "./constants";
-// import { RedFormat } from "three";
 export const Orbits = {
   Earth: {
     type: shapes.ellipse,
@@ -119,18 +118,18 @@ export const Orbits = {
       period: 3.6
     },
     color: 0xfff000
+  },
+  Pluto: {
+    type: shapes.ellipse,
+    dims: {
+      perihelion: 29.7 * AU,
+      aphelion: 49.3 * AU,
+      OrbitalInclination: 17,
+      period: 248,
+      eccentricity: 0.244
+    },
+    color: 0xf0f0f0
   }
-  // Pluto: {
-  //   type: shapes.ellipse,
-  //   dims: {
-  //     perihelion:,
-  //     aphelion:,
-  //     OrbitalInclination:,
-  //     period:,
-  //     eccentricity: 0.244
-  //   },
-  //   color: 0xf0f0f0
-  // },
 };
 export const SpaceObjects = {
   Sun: {
@@ -138,7 +137,7 @@ export const SpaceObjects = {
     dims: {
       radius: 6000,
       aphelionSegments: 8,
-      perihelionSegments: 6
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -151,8 +150,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -165,8 +164,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -179,8 +178,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -194,8 +193,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -209,8 +208,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -224,8 +223,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -239,8 +238,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -254,8 +253,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -269,8 +268,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -284,8 +283,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -299,8 +298,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      perihelionSegments: 6
+      widthSegments: 8,
+      heightSegments: 6
     },
     pos: {
       x: 0,
@@ -308,5 +307,19 @@ export const SpaceObjects = {
       z: 0
     },
     color: 0xf0f000
+  },
+  Pluto: {
+    type: shapes.sphere,
+    dims: {
+      radius: 6000,
+      widthSegments: 8,
+      heightSegments: 6
+    },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
+    },
+    color: 0x0000ff
   }
 };
