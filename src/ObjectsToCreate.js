@@ -155,8 +155,8 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_earth_daymap.jpg",
     dims: {
       radius: 6371,
-      widthSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
