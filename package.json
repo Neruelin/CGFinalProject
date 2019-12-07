@@ -4,6 +4,7 @@
   "description": "Simulating Perfect Astronautical Chore Expeditions project or the SPACE Project for short.",
   "main": "main.js",
   "dependencies": {
+    "dat.gui": "^0.7.6",
     "three": "^0.110.0"
   },
   "devDependencies": {
