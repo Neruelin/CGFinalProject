@@ -15,9 +15,7 @@ import {
   SphereBufferGeometry,
   TextureLoader,
   WebGLRenderer,
-  Vector3,
-  SpriteMaterial,
-  Sprite,
+  Vector3
 } from "three";
 import * as dat from 'dat.gui';
 import { OrbitControls } from "./OrbitControls";
@@ -32,10 +30,11 @@ let scene,
   camera,
   renderer,
   controls,
-  gui = new dat.GUI({autoPlace: true}),
-  guiObject = {target: ""},
   lockon,
   startTime = Date.now(),
+  timeScale = 1000,
+  gui = new dat.GUI({autoPlace: true}),
+  guiObject = {target: "", timeScale: timeScale},
   objects = [];
 
 function initControls() {
@@ -72,8 +71,8 @@ function parametricEllipse(x = 0, y = 0, t, period, eccentricity) {
   let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
 
   return {
-    x: major * Math.cos((radsPerSec * t) / period),
-    y: minor * Math.sin((radsPerSec * t) / period)
+    x: major * Math.cos((radsPerSec * t * timeScale) / period),
+    y: minor * Math.sin((radsPerSec * t * timeScale) / period)
   };
 }
 
@@ -112,17 +111,12 @@ function initScene() {
 
   let flare = textureLoader.load("./assets/textures/flare.png");
   let lensflare = new Lensflare();
+  lensflare.renderOrder = 2;
   lensflare.addElement( new LensflareElement(flare, 100, 0, new Color(0xFFFFFF)));
 
   sunLight.add(lensflare);
 
   scene.add(sunLight);
-
-  // let spriteMap = textureLoader.load("./assets/textures/flare.png");
-  // let spriteMat = new SpriteMaterial( {map: spriteMap, color: 0xFFFFFF} );
-  // let sprite = new Sprite( spriteMat);
-  // sprite.scale.set(100000,100000,100000);
-  // scene.add(sprite);
 
   let ambient = new AmbientLight(0xffffff, 0.2);
   scene.add(ambient);
@@ -154,20 +148,26 @@ function updateObjectPositions() {
   let key;
   for (key of Object.keys(SpaceObjects)) {
     if (key == "Sun") continue;
+    let period = Orbits[key].dims.period;
+
     let pos = parametricEllipse(
       Orbits[key].dims.perihelion,
       Orbits[key].dims.aphelion,
       Date.now() - startTime,
-      Orbits[key].dims.period,
+      period,
       Orbits[key].dims.eccentricity | 0
-    );
+      );
+
     SpaceObjects[key].obj.position.y =
       pos.x * Math.sin((Orbits[key].dims.OrbitalInclination * Math.PI) / 180);
+
     SpaceObjects[key].obj.position.x =
       pos.x * Math.cos((Orbits[key].dims.OrbitalInclination * Math.PI) / 180);
+
     SpaceObjects[key].obj.position.z =
       pos.y + Orbits[key].dims.aphelion - Orbits[key].dims.perihelion;
   }
+
   if (lockon in SpaceObjects) {
     controls.target = new Vector3(SpaceObjects[lockon].obj.position.x, SpaceObjects[lockon].obj.position.y, SpaceObjects[lockon].obj.position.z);
   } 
@@ -182,7 +182,71 @@ function animate() {
 
 function initGUI() {
   let folder = gui.addFolder('Lock On');
-  folder.add(guiObject, 'target').onChange(setLockon);
+  folder
+    .add(guiObject, 'target')
+    .name("Target")
+    .onChange(setLockon);
+
+    let timeScales = {
+      real: false,
+      ten: false,
+      hundred: false,
+      thousand: true,
+      tenThousand: false
+    }
+    
+    let timeFolder = gui.addFolder("Time Controls");
+    timeFolder
+      .add(timeScales, 'real')
+      .name('Real Time')
+      .listen().onChange(function(){
+        setChecked("real");
+        timeScale = 1;
+      });
+
+    timeFolder
+      .add(timeScales, 'ten')
+      .name('x10')
+      .listen().onChange(function(){
+        setChecked("ten");
+        timeScale = 10;
+      });
+
+    timeFolder
+      .add(timeScales, 'hundred')
+      .name('x100')
+      .listen().onChange(function(){
+        setChecked("hundred");
+        timeScale = 100;
+      });
+
+    timeFolder
+      .add(timeScales, 'thousand')
+      .name('x1000')
+      .listen().onChange(function(){
+        setChecked("thousand");
+        timeScale = 1000;
+      });
+    
+    timeFolder
+      .add(timeScales, 'tenThousand')
+      .name('x10000')
+      .listen().onChange(function(){
+        setChecked("tenThousand");
+        timeScale = 10000;
+      });
+    
+    function setChecked( prop ){
+      for (let param in timeScales){
+        timeScales[param] = false;
+      }
+      timeScales[prop] = true;
+    }
+  
+  // timeFolder
+  //   .add(guiObject, "timeScale").min(1).max(50000).step(1000)
+  //   .name("Scale")
+  //   .onChange(val => {timeScale = val});
 }
 
 function init() {

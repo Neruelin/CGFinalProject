@@ -100,7 +100,7 @@ export default function shapePipeline(spec) {
       let mat = new MeshStandardMaterial( {map:texture, metalness: 0.5, roughness: 1.0} );
       obj = new Mesh(geo, mat);
       obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
-      obj.renderOrder = 2;
+      obj.renderOrder = 3;
     }
   }
   return obj;
