@@ -95,7 +95,8 @@ export const Orbits = {
       perihelion: 2.5577 * AU,
       aphelion: 2.9773 * AU,
       OrbitalInclination: 10.62,
-      period: 4.6
+      period: 4.6,
+      eccentricity: 0.08
     },
     color: 0xfffff0
   },
@@ -105,7 +106,8 @@ export const Orbits = {
       perihelion: 2.13061 * AU,
       aphelion: 3.41261 * AU,
       OrbitalInclination: 35.06,
-      period: 4.6
+      period: 4.6,
+      eccentricity: 0.2305
     },
     color: 0xffff00
   },
@@ -115,7 +117,8 @@ export const Orbits = {
       perihelion: 2.15 * AU,
       aphelion: 2.57 * AU,
       OrbitalInclination: 5.58,
-      period: 3.6
+      period: 3.6,
+      eccentricity: 0.09
     },
     color: 0xfff000
   },
@@ -192,7 +195,6 @@ export const SpaceObjects = {
     },
     color: 0xff0000
   },
-
   Venus: {
     type: shapes.sphere,
     texture: "./assets/textures/2k_venus.jpg",
@@ -208,7 +210,6 @@ export const SpaceObjects = {
     },
     color: 0xff0000
   },
-
   Jupiter: {
     type: shapes.sphere,
     texture: "./assets/textures/2k_jupiter.jpg",
@@ -224,7 +225,6 @@ export const SpaceObjects = {
     },
     color: 0xff0000
   },
-
   Saturn: {
     type: shapes.sphere,
     texture: "./assets/textures/2k_saturn.jpg",
@@ -240,7 +240,6 @@ export const SpaceObjects = {
     },
     color: 0xff0000
   },
-
   Uranus: {
     type: shapes.sphere,
     texture: "./assets/textures/2k_uranus.jpg",
@@ -256,7 +255,6 @@ export const SpaceObjects = {
     },
     color: 0xff0000
   },
-
   Neptune: {
     type: shapes.sphere,
     texture: "./assets/textures/2k_neptune.jpg",
@@ -291,7 +289,7 @@ export const SpaceObjects = {
   Pallas: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 0.2725,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -306,7 +304,7 @@ export const SpaceObjects = {
   Vesta: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 0.2627,
       widthSegments: 8,
       heightSegments: 6
     },
@@ -320,7 +318,7 @@ export const SpaceObjects = {
   Pluto: {
     type: shapes.sphere,
     dims: {
-      radius: 6000,
+      radius: 1.188,
       widthSegments: 8,
       heightSegments: 6
     },
