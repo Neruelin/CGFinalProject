@@ -16,6 +16,7 @@ import {
   WebGLRenderer,
   Vector3
 } from "three";
+import * as dat from 'dat.gui';
 import { OrbitControls } from "./OrbitControls";
 import STLLoader from "./STLLoader";
 import { Orbits, SpaceObjects } from "./ObjectsToCreate";
@@ -27,6 +28,8 @@ let scene,
   camera,
   renderer,
   controls,
+  gui = new dat.GUI({autoPlace: true}),
+  guiObject = {target: ""},
   lockon,
   startTime = Date.now(),
   objects = [];
@@ -145,8 +148,8 @@ function updateObjectPositions() {
       pos.y + Orbits[key].dims.aphelion - Orbits[key].dims.perihelion;
   }
   if (lockon in SpaceObjects) {
-    controls.target = SpaceObjects[lockon].obj.position;
-  }
+    controls.target = new Vector3(SpaceObjects[lockon].obj.position.x, SpaceObjects[lockon].obj.position.y, SpaceObjects[lockon].obj.position.z);
+  } 
 }
 
 function animate() {
@@ -156,7 +159,13 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+function initGUI() {
+  let folder = gui.addFolder('Lock On');
+  folder.add(guiObject, 'target').onChange(setLockon);
+}
+
 function init() {
+  initGUI();
   initCamera();
   initRenderer();
   initControls();
@@ -175,10 +184,14 @@ function addAt(x, y, z) {
 function setLockon(target) {
   if (target && target in SpaceObjects) {
     lockon = target;
+    console.log("Locked on " + target);
   } else {
-    lockon = undefined;
-    console.log("invalid lockon");
+    if (lockon) {
+      console.log("invalid lockon");
+      lockon = undefined;
+    }
   }
+  console.log(lockon);
 }
 
 
