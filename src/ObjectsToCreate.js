@@ -152,7 +152,7 @@ export const SpaceObjects = {
   Earth: {
     type: shapes.sphere,
     dims: {
-      radius: 6.371,
+      radius: 6371,
       widthSegments: 8,
       heightSegments: 6
     },

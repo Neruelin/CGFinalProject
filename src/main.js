@@ -13,7 +13,8 @@ import {
   ShaderMaterial,
   SphereBufferGeometry,
   TextureLoader,
-  WebGLRenderer
+  WebGLRenderer,
+  Vector3
 } from "three";
 import { OrbitControls } from "./OrbitControls";
 import STLLoader from "./STLLoader";
@@ -26,6 +27,7 @@ let scene,
   camera,
   renderer,
   controls,
+  lockon,
   startTime = Date.now(),
   objects = [];
 
@@ -142,6 +144,9 @@ function updateObjectPositions() {
     SpaceObjects[key].obj.position.z =
       pos.y + Orbits[key].dims.aphelion - Orbits[key].dims.perihelion;
   }
+  if (lockon in SpaceObjects) {
+    controls.target = SpaceObjects[lockon].obj.position;
+  }
 }
 
 function animate() {
@@ -167,4 +172,18 @@ function addAt(x, y, z) {
   scene.add(mesh);
 }
 
+function setLockon(target) {
+  if (target && target in SpaceObjects) {
+    lockon = target;
+  } else {
+    lockon = undefined;
+    console.log("invalid lockon");
+  }
+}
+
+
 init();
+
+// console.log(setLockon);
+// setLockon("Earth");
+// console.log(controls);
