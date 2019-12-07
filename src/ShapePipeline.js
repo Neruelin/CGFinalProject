@@ -1,16 +1,19 @@
 import {
-  MeshBasicMaterial,
+  MeshStandardMaterial,
   LineBasicMaterial,
   BufferGeometry,
   BoxBufferGeometry,
   ConeBufferGeometry,
   TorusBufferGeometry,
   SphereBufferGeometry,
+  TextureLoader,
   Mesh,
   Line,
   Points,
   EllipseCurve,
-  Vector2
+  Vector2,
+  sRGBEncoding,
+  MeshBasicMaterial
 } from "three";
 import shapes from "./Shapes";
 import { eccentricityFactor } from "./constants";
@@ -30,7 +33,6 @@ const RightAngle = Math.PI / 2;
 
 export default function shapePipeline(spec) {
   let geo, obj;
-  let mat = new MeshBasicMaterial({ color: spec.color });
   switch (spec.type) {
     case shapes.sphere:
       geo = new SphereBufferGeometry(
@@ -71,19 +73,29 @@ export default function shapePipeline(spec) {
       );
       let points = curve.getPoints(500);
       geo = new BufferGeometry().setFromPoints(points);
-      mat = new LineBasicMaterial({ color: spec.color });
       break;
     default:
       return undefined;
   }
 
   if (spec.type == shapes.ellipse) {
+    let mat = new LineBasicMaterial({ color: spec.color });
     obj = new Line(geo, mat);
     obj.rotation.x = RightAngle;
     obj.rotation.y = spec.dims.OrbitalInclination * RadsPerDegree;
     obj.rotation.z = RightAngle;
   } else {
-    obj = new Mesh(geo, mat);
+    let texture = new TextureLoader().load(spec.texture);
+    texture.encoding = sRGBEncoding;
+    texture.anisotrophy = 16;
+
+    if(spec == "Sun") {
+      let mat = new MeshBasicMaterial( {map:texture} );
+      obj = new Mesh(geo, mat);
+    } else {
+      let mat = new MeshStandardMaterial( {map:texture, metalness: 0.0, roughness: 0.8} );
+      obj = new Mesh(geo, mat);
+    }
     obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
   }
   return obj;

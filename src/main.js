@@ -1,5 +1,6 @@
 import {
   AxisHelper,
+  AmbientLight,
   BackSide,
   BoxBufferGeometry,
   Color,
@@ -96,14 +97,17 @@ function initScene() {
     scene.add(new Mesh(geometry, mat));
   });
 
-  let light = new PointLight(0xffffff, 1, 0, 0);
-  light.position.set(0, 1000, 0);
-  scene.add(light);
+  let sunLight = new PointLight(0xffffff, 2, 0, 0);
+  sunLight.position.set(0, 1000, 0);
+  scene.add(sunLight);
+
+  let ambient = new AmbientLight(0xffffff, 0.2);
+  scene.add(ambient);
 
   let sky;
 
   const textureLoader = new TextureLoader();
-  const skyTexture = textureLoader.load("./assets/8k_stars_milky_way.jpg");
+  const skyTexture = textureLoader.load("./assets/textures/8k_stars_milky_way.jpg");
 
   skyTexture.magFilter = LinearFilter;
   skyTexture.minFilter = LinearFilter;
@@ -121,7 +125,7 @@ function initScene() {
 
   const plane = new BoxBufferGeometry(1000000000, 1000000000, 1000000000);
   sky = new Mesh(plane, shaderMat);
-  // scene.add(sky);
+  scene.add(sky);
 }
 
 function updateObjectPositions() {
