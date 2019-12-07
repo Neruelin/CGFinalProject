@@ -1,5 +1,5 @@
 import {
-  MeshBasicMaterial,
+  MeshStandardMaterial,
   LineBasicMaterial,
   BufferGeometry,
   BoxBufferGeometry,
@@ -12,7 +12,8 @@ import {
   Points,
   EllipseCurve,
   Vector2,
-  sRGBEncoding
+  sRGBEncoding,
+  MeshBasicMaterial
 } from "three";
 import shapes from "./Shapes";
 import { eccentricityFactor } from "./constants";
@@ -88,8 +89,13 @@ export default function shapePipeline(spec) {
     texture.encoding = sRGBEncoding;
     texture.anisotrophy = 16;
 
-    let mat = new MeshBasicMaterial( {map:texture} );
-    obj = new Mesh(geo, mat);
+    if(spec == "Sun") {
+      let mat = new MeshBasicMaterial( {map:texture} );
+      obj = new Mesh(geo, mat);
+    } else {
+      let mat = new MeshStandardMaterial( {map:texture, metalness: 0.0, roughness: 0.8} );
+      obj = new Mesh(geo, mat);
+    }
     obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
   }
   return obj;

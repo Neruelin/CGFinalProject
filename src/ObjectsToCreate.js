@@ -133,11 +133,12 @@ export const Orbits = {
 };
 export const SpaceObjects = {
   Sun: {
+    texture: "./assets/textures/2k_sun.jpg",
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      aphelionSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -148,11 +149,11 @@ export const SpaceObjects = {
   },
   Earth: {
     type: shapes.sphere,
-    texture: "./assets/2k_earth_daymap.jpg",
+    texture: "./assets/textures/2k_earth_daymap.jpg",
     dims: {
       radius: 6000,
-      widthSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -163,10 +164,11 @@ export const SpaceObjects = {
   },
   Mars: {
     type: shapes.sphere,
+    texture: "./assets/textures/2k_mars.jpg",
     dims: {
       radius: 6000,
-      widthSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -177,10 +179,11 @@ export const SpaceObjects = {
   },
   Mercury: {
     type: shapes.sphere,
+    texture: "./assets/textures/2k_mercury.jpg",
     dims: {
       radius: 6000,
-      widthSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -192,10 +195,11 @@ export const SpaceObjects = {
 
   Venus: {
     type: shapes.sphere,
+    texture: "./assets/textures/2k_venus.jpg",
     dims: {
       radius: 6000,
-      widthSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -207,10 +211,11 @@ export const SpaceObjects = {
 
   Jupiter: {
     type: shapes.sphere,
+    texture: "./assets/textures/2k_jupiter.jpg",
     dims: {
       radius: 6000,
-      widthSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -222,10 +227,11 @@ export const SpaceObjects = {
 
   Saturn: {
     type: shapes.sphere,
+    texture: "./assets/textures/2k_saturn.jpg",
     dims: {
       radius: 6000,
-      widthSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -237,10 +243,11 @@ export const SpaceObjects = {
 
   Uranus: {
     type: shapes.sphere,
+    texture: "./assets/textures/2k_uranus.jpg",
     dims: {
       radius: 6000,
-      widthSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -252,10 +259,11 @@ export const SpaceObjects = {
 
   Neptune: {
     type: shapes.sphere,
+    texture: "./assets/textures/2k_neptune.jpg",
     dims: {
       radius: 6000,
-      widthSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -269,8 +277,8 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
-      widthSegments: 8,
-      heightSegments: 6
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
