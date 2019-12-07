@@ -89,14 +89,17 @@ export default function shapePipeline(spec) {
     texture.encoding = sRGBEncoding;
     texture.anisotrophy = 16;
 
-    if(spec == "Sun") {
-      let mat = new MeshBasicMaterial( {map:texture} );
-      obj = new Mesh(geo, mat);
+    if(spec.texture == "./assets/textures/2k_sun.jpg") {
+       let mat = new MeshBasicMaterial( {map:texture} );
+       mat.setValues({visible:false});
+       
+       obj = new Mesh(geo, mat);
+       obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
     } else {
-      let mat = new MeshStandardMaterial( {map:texture, metalness: 0.0, roughness: 0.8} );
+      let mat = new MeshStandardMaterial( {map:texture, metalness: 0.5, roughness: 1.0} );
       obj = new Mesh(geo, mat);
+      obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
     }
-    obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
   }
   return obj;
 }

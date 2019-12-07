@@ -15,10 +15,13 @@ import {
   SphereBufferGeometry,
   TextureLoader,
   WebGLRenderer,
-  Vector3
+  Vector3,
+  SpriteMaterial,
+  Sprite,
 } from "three";
 import * as dat from 'dat.gui';
 import { OrbitControls } from "./OrbitControls";
+import { Lensflare, LensflareElement } from "./Lensflare";
 import STLLoader from "./STLLoader";
 import { Orbits, SpaceObjects } from "./ObjectsToCreate";
 import shapePipeline from "./ShapePipeline";
@@ -79,8 +82,8 @@ function initScene() {
   scene.background = new Color(background);
   scene.add(camera);
 
-  let axes2 = new AxisHelper(1000000000);
-  scene.add(axes2);
+  // let axes2 = new AxisHelper(1000000000);
+  // scene.add(axes2);
 
   let key;
   for (key of Object.keys(SpaceObjects)) {
@@ -102,16 +105,30 @@ function initScene() {
     scene.add(new Mesh(geometry, mat));
   });
 
+  const textureLoader = new TextureLoader();
+
   let sunLight = new PointLight(0xffffff, 2, 0, 0);
-  sunLight.position.set(0, 1000, 0);
+  sunLight.position.set(0, 0, 0);
+
+  let flare = textureLoader.load("./assets/textures/flare.png");
+  let lensflare = new Lensflare();
+  lensflare.addElement( new LensflareElement(flare, 100, 0, new Color(0xFFFFFF)));
+
+  sunLight.add(lensflare);
+
   scene.add(sunLight);
+
+  // let spriteMap = textureLoader.load("./assets/textures/flare.png");
+  // let spriteMat = new SpriteMaterial( {map: spriteMap, color: 0xFFFFFF} );
+  // let sprite = new Sprite( spriteMat);
+  // sprite.scale.set(100000,100000,100000);
+  // scene.add(sprite);
 
   let ambient = new AmbientLight(0xffffff, 0.2);
   scene.add(ambient);
 
   let sky;
 
-  const textureLoader = new TextureLoader();
   const skyTexture = textureLoader.load("./assets/textures/8k_stars_milky_way.jpg");
 
   skyTexture.magFilter = LinearFilter;
