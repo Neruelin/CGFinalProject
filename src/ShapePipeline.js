@@ -81,6 +81,7 @@ export default function shapePipeline(spec) {
   if (spec.type == shapes.ellipse) {
     let mat = new LineBasicMaterial({ color: spec.color });
     obj = new Line(geo, mat);
+    obj.renderOrder = 1;
     obj.rotation.x = RightAngle;
     obj.rotation.y = spec.dims.OrbitalInclination * RadsPerDegree;
     obj.rotation.z = RightAngle;
@@ -92,13 +93,14 @@ export default function shapePipeline(spec) {
     if(spec.texture == "./assets/textures/2k_sun.jpg") {
        let mat = new MeshBasicMaterial( {map:texture} );
        mat.setValues({visible:false});
-       
+
        obj = new Mesh(geo, mat);
        obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
     } else {
       let mat = new MeshStandardMaterial( {map:texture, metalness: 0.5, roughness: 1.0} );
       obj = new Mesh(geo, mat);
       obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
+      obj.renderOrder = 2;
     }
   }
   return obj;
