@@ -48,7 +48,7 @@ function initCamera() {
     0.1,
     farOcclusionDistance
   );
-  camera.position.set(0, 100000, 0);
+  camera.position.set(240000, 0, 240000);
   camera.lookAt(0, 0, 0);
   window.addEventListener("resize", onWindowResize, false);
 }

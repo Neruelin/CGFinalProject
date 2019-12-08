@@ -153,7 +153,7 @@ export const SpaceObjects = {
   },
   Earth: {
     type: shapes.sphere,
-    texture: "./assets/textures/earth_16k.jpg",
+    texture: "./assets/textures/earth_8k.jpg",
     dims: {
       radius: 6371,
       actualRadius: 6.371,
