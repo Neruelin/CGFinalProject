@@ -37,7 +37,8 @@ let scene,
     target: "",
     unlock: function() {
       setLockon("");
-    }
+    },
+    lockonDistance: 20
   },
   startTime = Date.now(),
   objects = [];
@@ -95,8 +96,6 @@ function createOverlayDiv(key) {
     "position: absolute; top: 0px; left: 0px; border: 1px solid green; color: green; background-color: rgba(1,1,1,0.2);";
   return div;
 }
-
-console.log(createOverlayDiv);
 
 function initScene() {
   scene = new Scene();
@@ -179,10 +178,9 @@ function toScreenPosition(obj, camera) {
   let v1 = camera.position.clone();
   let v2 = obj.position.clone();
   let v3 = new Vector3(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
-  let v4 = camera.getWorldDirection();
+  let v4 = new Vector3();
+  camera.getWorldDirection(v4);
   let dot = v3.dot(v4);
-
-  // console.log(dot);
 
   if (dot <= 0) {
     return {
@@ -216,11 +214,15 @@ function updateObjectPositions() {
       pos.y + Orbits[key].dims.aphelion - Orbits[key].dims.perihelion;
   }
   if (lockon in SpaceObjects) {
-    controls.target = new Vector3(
-      SpaceObjects[lockon].obj.position.x,
-      SpaceObjects[lockon].obj.position.y,
-      SpaceObjects[lockon].obj.position.z
-    );
+    let v1 = camera.position.clone();
+    let v2 = SpaceObjects[lockon].obj.position.clone();
+    let obj2cam = new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+    let norm = obj2cam.normalize();
+    let dist = SpaceObjects[lockon].dims.radius * guiObject.lockonDistance;
+    let nXd = new Vector3(norm.x * dist, norm.y * dist, norm.z * dist);
+    let final = new Vector3(nXd.x + v2.x, nXd.y + v2.y, nXd.z + v2.z);
+    camera.position.set(final.x, final.y, final.z);
+    controls.target = new Vector3(v2.x, v2.y, v2.z);
   }
 }
 
@@ -253,12 +255,12 @@ function animate() {
   updateObjectPositions();
   updateOverlayPositions();
   renderer.render(scene, camera);
-  // let pos = toScreenPosition(SpaceObjects["Sun"].obj, camera);
 }
 
 function initGUI() {
   let folder = gui.addFolder("Lock On");
   folder.add(guiObject, "target").onChange(setLockon);
+  folder.add(guiObject, "lockonDistance", 1, 50);
   folder.add(guiObject, "unlock");
 }
 
@@ -292,8 +294,3 @@ function setLockon(target) {
 }
 
 init();
-
-function print() {
-  console.log(overlayDivs);
-}
-console.log(print);
