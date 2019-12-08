@@ -1,5 +1,5 @@
 import {
-  AxisHelper,
+  AxesHelper,
   AmbientLight,
   BackSide,
   BoxBufferGeometry,
@@ -16,8 +16,9 @@ import {
   TextureLoader,
   WebGLRenderer,
   Vector3
+  // OrthographicCamera
 } from "three";
-import * as dat from 'dat.gui';
+import * as dat from "dat.gui";
 import { OrbitControls } from "./OrbitControls";
 import STLLoader from "./STLLoader";
 import { Orbits, SpaceObjects } from "./ObjectsToCreate";
@@ -29,9 +30,15 @@ let scene,
   camera,
   renderer,
   controls,
-  gui = new dat.GUI({autoPlace: true}),
-  guiObject = {target: ""},
+  gui = new dat.GUI({ autoPlace: true }),
+  overlayDivs = [],
   lockon,
+  guiObject = {
+    target: "",
+    unlock: function() {
+      setLockon("");
+    }
+  },
   startTime = Date.now(),
   objects = [];
 
@@ -48,6 +55,7 @@ function initCamera() {
   );
   camera.position.set(0, 100000, 0);
   camera.lookAt(0, 0, 0);
+
   window.addEventListener("resize", onWindowResize, false);
 }
 
@@ -61,6 +69,8 @@ function initRenderer() {
   renderer = new WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
+
+  renderer.domElement.id = "meCanvas";
   document.body.appendChild(renderer.domElement);
 }
 
@@ -74,12 +84,26 @@ function parametricEllipse(x = 0, y = 0, t, period, eccentricity) {
   };
 }
 
+function createOverlayDiv(key) {
+  let div = document.createElement("div");
+  div.appendChild(document.createTextNode(key));
+  div.id = key;
+  div.onclick = e => {
+    setLockon(key);
+  };
+  div.style.cssText =
+    "position: absolute; top: 0px; left: 0px; border: 1px solid green; color: green; background-color: rgba(1,1,1,0.2);";
+  return div;
+}
+
+console.log(createOverlayDiv);
+
 function initScene() {
   scene = new Scene();
   scene.background = new Color(background);
   scene.add(camera);
 
-  let axes2 = new AxisHelper(1000000000);
+  let axes2 = new AxesHelper(1000000000);
   scene.add(axes2);
 
   let key;
@@ -88,6 +112,10 @@ function initScene() {
     SpaceObjects[key].obj = obj;
     objects.push(obj);
     scene.add(obj);
+
+    let div = createOverlayDiv(key);
+    overlayDivs[key] = div;
+    document.body.appendChild(overlayDivs[key]);
   }
 
   for (key of Object.keys(Orbits)) {
@@ -112,7 +140,9 @@ function initScene() {
   let sky;
 
   const textureLoader = new TextureLoader();
-  const skyTexture = textureLoader.load("./assets/textures/8k_stars_milky_way.jpg");
+  const skyTexture = textureLoader.load(
+    "./assets/textures/8k_stars_milky_way.jpg"
+  );
 
   skyTexture.magFilter = LinearFilter;
   skyTexture.minFilter = LinearFilter;
@@ -131,6 +161,40 @@ function initScene() {
   const plane = new BoxBufferGeometry(1000000000, 1000000000, 1000000000);
   sky = new Mesh(plane, shaderMat);
   scene.add(sky);
+}
+
+function toScreenPosition(obj, camera) {
+  var vector = new Vector3();
+
+  var widthHalf = 0.5 * renderer.getContext().canvas.width;
+  var heightHalf = 0.5 * renderer.getContext().canvas.height;
+
+  obj.updateMatrixWorld(true, false);
+  obj.getWorldPosition(vector);
+  vector.project(camera);
+
+  vector.x = vector.x * widthHalf + widthHalf;
+  vector.y = -(vector.y * heightHalf) + heightHalf;
+
+  let v1 = camera.position.clone();
+  let v2 = obj.position.clone();
+  let v3 = new Vector3(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
+  let v4 = camera.getWorldDirection();
+  let dot = v3.dot(v4);
+
+  // console.log(dot);
+
+  if (dot <= 0) {
+    return {
+      x: 0,
+      y: 0
+    };
+  }
+
+  return {
+    x: vector.x,
+    y: vector.y
+  };
 }
 
 function updateObjectPositions() {
@@ -152,20 +216,50 @@ function updateObjectPositions() {
       pos.y + Orbits[key].dims.aphelion - Orbits[key].dims.perihelion;
   }
   if (lockon in SpaceObjects) {
-    controls.target = new Vector3(SpaceObjects[lockon].obj.position.x, SpaceObjects[lockon].obj.position.y, SpaceObjects[lockon].obj.position.z);
-  } 
+    controls.target = new Vector3(
+      SpaceObjects[lockon].obj.position.x,
+      SpaceObjects[lockon].obj.position.y,
+      SpaceObjects[lockon].obj.position.z
+    );
+  }
+}
+
+function updateOverlayPositions() {
+  let key;
+  for (key of Object.keys(SpaceObjects)) {
+    let pos = toScreenPosition(SpaceObjects[key].obj, camera);
+    if (
+      pos.x < renderer.getContext().canvas.width &&
+      pos.x >= 0 &&
+      pos.y < renderer.getContext().canvas.height &&
+      pos.y >= 0
+    ) {
+      overlayDivs[key].style.visibility = "visible";
+    } else {
+      overlayDivs[key].style.visibility = "hidden";
+      pos.x = 0;
+      pos.y = 0;
+    }
+
+    overlayDivs[key].style.transform = `translate(-50%, -50%) translate(${
+      pos.x
+    }px,${pos.y - 10}px)`;
+  }
 }
 
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
   updateObjectPositions();
+  updateOverlayPositions();
   renderer.render(scene, camera);
+  // let pos = toScreenPosition(SpaceObjects["Sun"].obj, camera);
 }
 
 function initGUI() {
-  let folder = gui.addFolder('Lock On');
-  folder.add(guiObject, 'target').onChange(setLockon);
+  let folder = gui.addFolder("Lock On");
+  folder.add(guiObject, "target").onChange(setLockon);
+  folder.add(guiObject, "unlock");
 }
 
 function init() {
@@ -195,12 +289,11 @@ function setLockon(target) {
       lockon = undefined;
     }
   }
-  console.log(lockon);
 }
-
 
 init();
 
-// console.log(setLockon);
-// setLockon("Earth");
-// console.log(controls);
+function print() {
+  console.log(overlayDivs);
+}
+console.log(print);
