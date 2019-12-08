@@ -36,7 +36,7 @@ export default function shapePipeline(spec) {
   switch (spec.type) {
     case shapes.sphere:
       geo = new SphereBufferGeometry(
-        spec.dims.radius,
+        spec.dims.actualRadius * 1000,
         spec.dims.widthSegments,
         spec.dims.heightSegments
       );

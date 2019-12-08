@@ -281,7 +281,6 @@ function initGUI() {
 
   let timeScales = {
     real: false,
-    ten: false,
     hundred: false,
     thousand: true,
     tenThousand: false
@@ -294,14 +293,6 @@ function initGUI() {
     .listen().onChange(function(){
       setChecked("real");
       timeScale = 1;
-    });
-
-  timeFolder
-    .add(timeScales, 'ten')
-    .name('x10')
-    .listen().onChange(function(){
-      setChecked("ten");
-      timeScale = 10;
     });
 
   timeFolder
@@ -343,14 +334,6 @@ function init() {
   initControls();
   initScene();
   animate();
-}
-
-function addAt(x, y, z) {
-  let geo = new SphereBufferGeometry(6000, 10, 10);
-  let mat = new MeshBasicMaterial({ color: 0xff0000 });
-  let mesh = new Mesh(geo, mat);
-  mesh.position.set(x, y, z);
-  scene.add(mesh);
 }
 
 function setLockon(target) {
