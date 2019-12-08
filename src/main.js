@@ -30,7 +30,7 @@ let scene,
   renderer,
   controls,
   gui = new dat.GUI({autoPlace: true}),
-  guiObject = {target: ""},
+  guiObject = {target: "", lockonDistance: 20},
   lockon,
   startTime = Date.now(),
   objects = [];
@@ -152,6 +152,14 @@ function updateObjectPositions() {
       pos.y + Orbits[key].dims.aphelion - Orbits[key].dims.perihelion;
   }
   if (lockon in SpaceObjects) {
+    let v1 = camera.position.clone();
+    let v2 = SpaceObjects[lockon].obj.position.clone();
+    let obj2cam = new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+    let norm = obj2cam.normalize();
+    let dist = SpaceObjects[lockon].dims.radius * guiObject.lockonDistance;
+    let nXd = new Vector3(norm.x * dist, norm.y * dist, norm.z * dist);
+    let final = new Vector3(nXd.x + v2.x, nXd.y + v2.y, nXd.z + v2.z);
+    camera.position.set(final.x, final.y, final.z);
     controls.target = new Vector3(SpaceObjects[lockon].obj.position.x, SpaceObjects[lockon].obj.position.y, SpaceObjects[lockon].obj.position.z);
   } 
 }
@@ -166,6 +174,7 @@ function animate() {
 function initGUI() {
   let folder = gui.addFolder('Lock On');
   folder.add(guiObject, 'target').onChange(setLockon);
+  folder.add(guiObject, 'lockonDistance', 1,50);
 }
 
 function init() {
@@ -204,3 +213,10 @@ init();
 // console.log(setLockon);
 // setLockon("Earth");
 // console.log(controls);
+
+// let objToCamVec = camera.position.subVectors(SpaceObjects["Sun"].obj.position);
+// console.log(objToCamVec);
+console.log(camera.position)
+console.log(SpaceObjects["Sun"].obj.position);
+let tema = new Vector3().subVectors(SpaceObjects["Sun"].obj.position, camera.position);
+console.log(tema.normalize());
