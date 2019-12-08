@@ -31,7 +31,7 @@ let scene,
   renderer,
   controls,
   lockon,
-  startTime = Date.now(),
+  startTime = 81363000000000,
   timeScale = 1000,
   gui = new dat.GUI({autoPlace: true}),
   guiObject = {target: "", timeScale: timeScale},
@@ -48,7 +48,7 @@ function initCamera() {
     0.1,
     farOcclusionDistance
   );
-  camera.position.set(240000, 0, 240000);
+  camera.position.set(0, 500000, 0);
   camera.lookAt(0, 0, 0);
   window.addEventListener("resize", onWindowResize, false);
 }
