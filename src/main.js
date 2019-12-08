@@ -20,6 +20,7 @@ import {
 } from "three";
 import * as dat from "dat.gui";
 import { OrbitControls } from "./OrbitControls";
+import { Lensflare, LensflareElement } from "./Lensflare";
 import STLLoader from "./STLLoader";
 import { Orbits, SpaceObjects } from "./ObjectsToCreate";
 import shapePipeline from "./ShapePipeline";
@@ -30,18 +31,20 @@ let scene,
   camera,
   renderer,
   controls,
-  gui = new dat.GUI({ autoPlace: true }),
-  overlayDivs = [],
   lockon,
+  startTime = 81363000000000,
+  timeScale = 1000,
+  gui = new dat.GUI({autoPlace: true}),
   guiObject = {
     target: "",
     unlock: function() {
       setLockon("");
     },
-    lockonDistance: 20
+    lockonDistance: 20,
+    timeScale: timeScale
   },
-  startTime = Date.now(),
-  objects = [];
+  objects = [],
+  overlayDivs = [];
 
 function initControls() {
   controls = new OrbitControls(camera, renderer.domElement);
@@ -54,7 +57,7 @@ function initCamera() {
     0.1,
     farOcclusionDistance
   );
-  camera.position.set(0, 100000, 0);
+  camera.position.set(0, 500000, 0);
   camera.lookAt(0, 0, 0);
 
   window.addEventListener("resize", onWindowResize, false);
@@ -80,8 +83,8 @@ function parametricEllipse(x = 0, y = 0, t, period, eccentricity) {
   let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
 
   return {
-    x: major * Math.cos((radsPerSec * t) / period),
-    y: minor * Math.sin((radsPerSec * t) / period)
+    x: major * Math.cos((radsPerSec * t * timeScale) / period),
+    y: minor * Math.sin((radsPerSec * t * timeScale) / period)
   };
 }
 
@@ -102,8 +105,8 @@ function initScene() {
   scene.background = new Color(background);
   scene.add(camera);
 
-  let axes2 = new AxesHelper(1000000000);
-  scene.add(axes2);
+  // let axes2 = new AxisHelper(1000000000);
+  // scene.add(axes2);
 
   let key;
   for (key of Object.keys(SpaceObjects)) {
@@ -129,8 +132,18 @@ function initScene() {
     scene.add(new Mesh(geometry, mat));
   });
 
+  const textureLoader = new TextureLoader();
+
   let sunLight = new PointLight(0xffffff, 2, 0, 0);
-  sunLight.position.set(0, 1000, 0);
+  sunLight.position.set(0, 0, 0);
+
+  let flare = textureLoader.load("./assets/textures/flare.png");
+  let lensflare = new Lensflare();
+  lensflare.renderOrder = 2;
+  lensflare.addElement( new LensflareElement(flare, 100, 0, new Color(0xFFFFFF)));
+
+  sunLight.add(lensflare);
+
   scene.add(sunLight);
 
   let ambient = new AmbientLight(0xffffff, 0.2);
@@ -138,10 +151,7 @@ function initScene() {
 
   let sky;
 
-  const textureLoader = new TextureLoader();
-  const skyTexture = textureLoader.load(
-    "./assets/textures/8k_stars_milky_way.jpg"
-  );
+  const skyTexture = textureLoader.load("./assets/textures/8k_stars_milky_way.jpg");
 
   skyTexture.magFilter = LinearFilter;
   skyTexture.minFilter = LinearFilter;
@@ -199,20 +209,26 @@ function updateObjectPositions() {
   let key;
   for (key of Object.keys(SpaceObjects)) {
     if (key == "Sun") continue;
+    let period = Orbits[key].dims.period;
+
     let pos = parametricEllipse(
       Orbits[key].dims.perihelion,
       Orbits[key].dims.aphelion,
       Date.now() - startTime,
-      Orbits[key].dims.period,
+      period,
       Orbits[key].dims.eccentricity | 0
-    );
+      );
+
     SpaceObjects[key].obj.position.y =
       pos.x * Math.sin((Orbits[key].dims.OrbitalInclination * Math.PI) / 180);
+
     SpaceObjects[key].obj.position.x =
       pos.x * Math.cos((Orbits[key].dims.OrbitalInclination * Math.PI) / 180);
+
     SpaceObjects[key].obj.position.z =
       pos.y + Orbits[key].dims.aphelion - Orbits[key].dims.perihelion;
   }
+
   if (lockon in SpaceObjects) {
     let v1 = camera.position.clone();
     let v2 = SpaceObjects[lockon].obj.position.clone();
@@ -262,6 +278,62 @@ function initGUI() {
   folder.add(guiObject, "target").onChange(setLockon);
   folder.add(guiObject, "lockonDistance", 1, 50);
   folder.add(guiObject, "unlock");
+
+  let timeScales = {
+    real: false,
+    ten: false,
+    hundred: false,
+    thousand: true,
+    tenThousand: false
+  }
+  
+  let timeFolder = gui.addFolder("Time Controls");
+  timeFolder
+    .add(timeScales, 'real')
+    .name('Real Time')
+    .listen().onChange(function(){
+      setChecked("real");
+      timeScale = 1;
+    });
+
+  timeFolder
+    .add(timeScales, 'ten')
+    .name('x10')
+    .listen().onChange(function(){
+      setChecked("ten");
+      timeScale = 10;
+    });
+
+  timeFolder
+    .add(timeScales, 'hundred')
+    .name('x100')
+    .listen().onChange(function(){
+      setChecked("hundred");
+      timeScale = 100;
+    });
+
+  timeFolder
+    .add(timeScales, 'thousand')
+    .name('x1000')
+    .listen().onChange(function(){
+      setChecked("thousand");
+      timeScale = 1000;
+    });
+  
+  timeFolder
+    .add(timeScales, 'tenThousand')
+    .name('x10000')
+    .listen().onChange(function(){
+      setChecked("tenThousand");
+      timeScale = 10000;
+    });
+  
+  function setChecked( prop ){
+    for (let param in timeScales){
+      timeScales[param] = false;
+    }
+    timeScales[prop] = true;
+  }
 }
 
 function init() {

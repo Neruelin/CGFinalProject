@@ -140,6 +140,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     dims: {
       radius: 6000,
+      actualRadius: 695.51,
       widthSegments: 32,
       heightSegments: 32
     },
@@ -152,11 +153,12 @@ export const SpaceObjects = {
   },
   Earth: {
     type: shapes.sphere,
-    texture: "./assets/textures/2k_earth_daymap.jpg",
+    texture: "./assets/textures/earth_8k.jpg",
     dims: {
       radius: 6371,
-      widthSegments: 8,
-      heightSegments: 6
+      actualRadius: 6.371,
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -170,6 +172,7 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_mars.jpg",
     dims: {
       radius: 6000,
+      actualRadius: 3.3895,
       widthSegments: 32,
       heightSegments: 32
     },
@@ -185,6 +188,7 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_mercury.jpg",
     dims: {
       radius: 6000,
+      actualRadius: 2.4397,
       widthSegments: 32,
       heightSegments: 32
     },
@@ -200,6 +204,7 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_venus.jpg",
     dims: {
       radius: 6000,
+      actualRadius: 6.0518,
       widthSegments: 32,
       heightSegments: 32
     },
@@ -215,6 +220,7 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_jupiter.jpg",
     dims: {
       radius: 6000,
+      actualRadius: 69.911,
       widthSegments: 32,
       heightSegments: 32
     },
@@ -230,6 +236,7 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_saturn.jpg",
     dims: {
       radius: 6000,
+      actualRadius: 58.232,
       widthSegments: 32,
       heightSegments: 32
     },
@@ -245,6 +252,7 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_uranus.jpg",
     dims: {
       radius: 6000,
+      actualRadius: 25.362,
       widthSegments: 32,
       heightSegments: 32
     },
@@ -260,6 +268,7 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_neptune.jpg",
     dims: {
       radius: 6000,
+      actualRadius: 24.622,
       widthSegments: 32,
       heightSegments: 32
     },
@@ -273,8 +282,10 @@ export const SpaceObjects = {
 
   Ceres: {
     type: shapes.sphere,
+    texture: "./assets/textures/asteroid.jpg",
     dims: {
       radius: 6000,
+      actualRadius: 0.473,
       widthSegments: 32,
       heightSegments: 32
     },
@@ -288,10 +299,12 @@ export const SpaceObjects = {
 
   Pallas: {
     type: shapes.sphere,
+    texture: "./assets/textures/asteroid.jpg",
     dims: {
-      radius: 0.2725,
-      widthSegments: 8,
-      heightSegments: 6
+      radius: 6000,
+      actualRadius: 0.2725,
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -303,10 +316,12 @@ export const SpaceObjects = {
 
   Vesta: {
     type: shapes.sphere,
+    texture: "./assets/textures/asteroid.jpg",
     dims: {
-      radius: 0.2627,
-      widthSegments: 8,
-      heightSegments: 6
+      radius: 6000,
+      actualRadius: 0.2627,
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
@@ -317,10 +332,12 @@ export const SpaceObjects = {
   },
   Pluto: {
     type: shapes.sphere,
+    texture: "./assets/textures/pluto.png",
     dims: {
-      radius: 1.188,
-      widthSegments: 8,
-      heightSegments: 6
+      radius: 6000,
+      actualRadius: 1.188,
+      widthSegments: 32,
+      heightSegments: 32
     },
     pos: {
       x: 0,
