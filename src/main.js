@@ -43,7 +43,8 @@ let scene,
     lockonDistance: 20,
     timeScale: timeScale
   },
-  objects = [];
+  objects = [],
+  overlayDivs = [];
 
 function initControls() {
   controls = new OrbitControls(camera, renderer.domElement);
