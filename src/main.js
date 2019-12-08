@@ -176,10 +176,18 @@ function toScreenPosition(obj, camera) {
   vector.x = vector.x * widthHalf + widthHalf;
   vector.y = -(vector.y * heightHalf) + heightHalf;
 
-  if (vector.z <= 0) {
+  let v1 = camera.position.clone();
+  let v2 = obj.position.clone();
+  let v3 = new Vector3(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
+  let v4 = camera.getWorldDirection();
+  let dot = v3.dot(v4);
+
+  // console.log(dot);
+
+  if (dot <= 0) {
     return {
-      x: -1,
-      y: -1
+      x: 0,
+      y: 0
     };
   }
 
@@ -229,6 +237,8 @@ function updateOverlayPositions() {
       overlayDivs[key].style.visibility = "visible";
     } else {
       overlayDivs[key].style.visibility = "hidden";
+      pos.x = 0;
+      pos.y = 0;
     }
 
     overlayDivs[key].style.transform = `translate(-50%, -50%) translate(${
