@@ -235,7 +235,6 @@ function updateObjectPositions() {
   let key;
   let t = Date.now() - startTime;
   for (key of Object.keys(SpaceObjects)) {
-    console.log(key.day);
     SpaceObjects[key].obj
       .rotateOnAxis(new Vector3(0, 1, 0), ((2*Math.PI) / SpaceObjects[key].day) * timeScale);
 
