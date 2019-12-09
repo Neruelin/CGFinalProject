@@ -16,6 +16,7 @@ import {
   WebGLRenderer,
   Vector3
 } from "three";
+import React from 'react';
 import * as dat from "dat.gui";
 import { OrbitControls } from "./OrbitControls";
 import { Lensflare, LensflareElement } from "./Lensflare";
@@ -58,7 +59,8 @@ let scene,
         scene.remove(marker);
       }
     },
-    placeMarkers: false
+    ShowFullTelemetry: false,
+    placeMarkers: true
   },
   objects = [],
   overlayDivs = [];
@@ -114,8 +116,17 @@ function createOverlayDiv(key) {
     setLockon(key);
   };
   div.style.cssText =
-    "position: absolute; top: 0px; left: 0px; border: 1px solid green; color: green;";
+    "font-size: 12px; position: absolute; top: 0px; left: 0px; border: 1px solid green; color: green;";
   return div;
+}
+
+function addMarkerTracking (key) {
+  setInterval(() => {
+    let a = PhysicsObjects[key].obj.position;
+    if (guiObject.placeMarkers) {
+      addedMarkers.push(addAt(a.x, a.y, a.z, PhysicsObjects[key].color));
+    }
+  }, 1000);
 }
 
 function initScene() {
@@ -148,6 +159,8 @@ function initScene() {
     scene.add(obj);
     let div = createOverlayDiv(key);
     overlayDivs[key] = div;
+    console.log(key);
+    addMarkerTracking(key);
     document.body.appendChild(overlayDivs[key]);
   }
 
@@ -261,7 +274,8 @@ function updateObjectPositions() {
 
     SpaceObjects[key].velocity = new Vector3()
       .subVectors(oldPosition, SpaceObjects[key].obj.position)
-      .divideScalar(lastTime - Date.now());
+      .divideScalar(lastTime - Date.now())
+      .multiplyScalar(timeScale);
   }
 }
 
@@ -307,24 +321,27 @@ function updateOverlayPositions() {
     }
 
     if (key !== "Sun") {
-      overlayDivs[key].innerText =
-        key +
-        "\n" +
-        (SpaceObjects[key].obj.position.x / AU).toPrecision(2) +
-        "AU\n" +
-        (SpaceObjects[key].obj.position.y / AU).toPrecision(2) +
-        "AU\n" +
-        (SpaceObjects[key].obj.position.z / AU).toPrecision(2) +
-        "AU\n" +
-        (SpaceObjects[key].obj.position.length() / AU).toPrecision(2) +
-        "AU\n" +
-        SpaceObjects[key].velocity.x.toPrecision(5) +
-        "\n" +
-        SpaceObjects[key].velocity.y.toPrecision(5) +
-        "\n" +
-        SpaceObjects[key].velocity.z.toPrecision(5) +
-        "\n" +
-        SpaceObjects[key].velocity.length().toPrecision(5);
+      overlayDivs[key].innerText = key;
+      if (guiObject.ShowFullTelemetry) {
+        overlayDivs[key].innerText +=
+          "\n" +
+          (SpaceObjects[key].obj.position.x / AU).toPrecision(2) +
+          "AU\n" +
+          (SpaceObjects[key].obj.position.y / AU).toPrecision(2) +
+          "AU\n" +
+          (SpaceObjects[key].obj.position.z / AU).toPrecision(2) +
+          "AU\n" +
+          (SpaceObjects[key].obj.position.length() / AU).toPrecision(2) +
+          "AU\n" +
+          (SpaceObjects[key].velocity.x / 1000).toPrecision(5) +
+          " Km/s\n" +
+          (SpaceObjects[key].velocity.y / 1000).toPrecision(5) +
+          " Km/s\n" +
+          (SpaceObjects[key].velocity.z / 1000).toPrecision(5) +
+          " Km/s\n" +
+          (SpaceObjects[key].velocity.length() / 1000).toPrecision(5) +
+          " Km/s";
+      }
     }
 
     overlayDivs[key].style.transform = `translate(-50%, -50%) translate(${
@@ -345,19 +362,28 @@ function updateOverlayPositions() {
       pos.x = 0;
       pos.y = 0;
     }
+    overlayDivs[key].innerText = key;
+    if (guiObject.ShowFullTelemetry) {
 
-    overlayDivs[key].innerText =
-      key +
-      "\n" +
-      PhysicsObjects[key].velocity.x.toPrecision(5) +
-      "\n" +
-      PhysicsObjects[key].velocity.y.toPrecision(5) +
-      "\n" +
-      PhysicsObjects[key].velocity.z.toPrecision(5) +
-      "\n" +
-      PhysicsObjects[key].velocity.length().toPrecision(5);
-
-    // console.log(PhysicsObjects[key].velocity);
+      overlayDivs[key].innerText +=
+        "\n" +
+        (PhysicsObjects[key].obj.position.x / AU).toPrecision(2) +
+        "AU\n" +
+        (PhysicsObjects[key].obj.position.y / AU).toPrecision(2) +
+        "AU\n" +
+        (PhysicsObjects[key].obj.position.z / AU).toPrecision(2) +
+        "AU\n" +
+        (PhysicsObjects[key].obj.position.length() / AU).toPrecision(2) +
+        "AU\n" +
+        (PhysicsObjects[key].velocity.x / 1000).toPrecision(5) +
+        " Km/s\n" +
+        (PhysicsObjects[key].velocity.y / 1000).toPrecision(5) +
+        " Km/s\n" +
+        (PhysicsObjects[key].velocity.z / 1000).toPrecision(5) +
+        " Km/s\n" +
+        (PhysicsObjects[key].velocity.length() / 1000).toPrecision(5) +
+        " Km/s";
+    }
 
     overlayDivs[key].style.transform = `translate(-50%, -50%) translate(${
       pos.x
@@ -435,6 +461,9 @@ function initGUI() {
   let markerFolder = gui.addFolder("Marker");
   markerFolder.add(guiObject, "placeMarkers");
   markerFolder.add(guiObject, "clearMarkers");
+
+  let metricsFolder = gui.addFolder("Telemetry");
+  metricsFolder.add(guiObject, "ShowFullTelemetry");
 
   let timeScales = {
     real: true,
@@ -563,21 +592,12 @@ function setLockon(target) {
 
 init();
 
-setInterval(() => {
-  let a = PhysicsObjects.Probe.obj.position;
-  if (guiObject.placeMarkers) {
-    addedMarkers.push(addAt(a.x, a.y, a.z));
-  }
-}, 1000);
+// setInterval(() => {
+//   let a = PhysicsObjects.Probe1.obj.position;
+//   if (guiObject.placeMarkers) {
+//     addedMarkers.push(addAt(a.x, a.y, a.z));
+//   }
+// }, 1000);
 
-// createProbe(
-//   SpaceObjects.Earth.obj.position,
-//   SpaceObjects.Earth.velocity,
-//   0x0000ff,
-//   "Probe2"
-// );
-
-console.log(PhysicsObjects);
-console.log(SpaceObjects);
-
-// console.log(overlayDivs);
+// console.log(PhysicsObjects);
+// console.log(SpaceObjects);

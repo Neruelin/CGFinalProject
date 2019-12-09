@@ -428,7 +428,7 @@ export const SpaceObjects = {
 };
 
 export const PhysicsObjects = {
-  Probe: {
+  Probe1: {
     type: shapes.cube,
     dims: {
       size: 30,
@@ -442,5 +442,20 @@ export const PhysicsObjects = {
       z: 0
     },
     color: 0x00ff00
+  },
+  Probe2: {
+    type: shapes.cube,
+    dims: {
+      size: 30,
+      radius: 30,
+      mass: 500
+    },
+    velocity: new Vector3(0, 0, 50000),
+    pos: {
+      x: AU,
+      y: AU,
+      z: 0
+    },
+    color: 0x0000ff
   }
 };

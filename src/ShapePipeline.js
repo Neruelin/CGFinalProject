@@ -88,7 +88,7 @@ export default function shapePipeline(spec) {
   } else if (spec.type == shapes.cube) {
     let mat = new MeshBasicMaterial({ color: spec.color });
     obj = new Mesh(geo, mat);
-  } else {
+  } else if (spec.texture) {
     let texture = new TextureLoader().load(spec.texture);
     texture.encoding = sRGBEncoding;
     texture.anisotrophy = 16;
@@ -105,6 +105,9 @@ export default function shapePipeline(spec) {
       obj = new Mesh(geo, mat);
       obj.renderOrder = 3;
     }
+  } else {
+    let mat = new MeshBasicMaterial({ color: spec.color });
+    obj = new Mesh(geo, mat); 
   }
   obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
   return obj;
