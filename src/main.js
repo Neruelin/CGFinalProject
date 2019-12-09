@@ -43,7 +43,18 @@ let scene,
     lockonDistance: 20,
     timeScale: timeScale,
     coldSun: false,
-    showOrbits: true
+    showOrbits: true,
+    sizeScales: {
+      scaledup: true,
+      actualSize: false
+    },
+    timeScales: {
+      stopped: false,
+      real: false,
+      hundred: false,
+      thousand: true,
+      tenThousand: false
+    }
   },
   sun,
   sunLight,
@@ -121,6 +132,11 @@ function initScene() {
 
     if (obj.name == "Sun")
       obj.scale.set(0.075, 0.075, 0.075);
+    
+    if (obj.name == "Saturn")
+    {
+
+    }
 
     objects.push(obj);
     scene.add(obj);
@@ -217,14 +233,19 @@ function toScreenPosition(obj, camera) {
 
 function updateObjectPositions() {
   let key;
+  let t = Date.now() - startTime;
   for (key of Object.keys(SpaceObjects)) {
+    console.log(key.day);
+    SpaceObjects[key].obj
+      .rotateOnAxis(new Vector3(0, 1, 0), ((2*Math.PI) / SpaceObjects[key].day) * timeScale);
+
     if (key == "Sun") continue;
     let period = Orbits[key].dims.period;
 
     let pos = parametricEllipse(
       Orbits[key].dims.perihelion,
       Orbits[key].dims.aphelion,
-      Date.now() - startTime,
+      t,
       period,
       Orbits[key].dims.eccentricity | 0
       );
@@ -244,7 +265,11 @@ function updateObjectPositions() {
     let v2 = SpaceObjects[lockon].obj.position.clone();
     let obj2cam = new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
     let norm = obj2cam.normalize();
-    let dist = SpaceObjects[lockon].dims.radius * guiObject.lockonDistance;
+    let dist;
+    if (guiObject.sizeScales.scaledup)
+      dist = SpaceObjects[lockon].dims.actualRadius * 1000 * guiObject.lockonDistance;
+    else
+      dist = SpaceObjects[lockon].dims.actualRadius * guiObject.lockonDistance;
     let nXd = new Vector3(norm.x * dist, norm.y * dist, norm.z * dist);
     let final = new Vector3(nXd.x + v2.x, nXd.y + v2.y, nXd.z + v2.z);
     camera.position.set(final.x, final.y, final.z);
@@ -288,55 +313,42 @@ function initGUI() {
   folder.add(guiObject, "target").onChange(setLockon).name("Target");
   folder.add(guiObject, "lockonDistance", 0.001, 25.0, 0.001).name("Zoom");
   folder.add(guiObject, "unlock").name("Unlock");
-
-  let timeScales = {
-    stopped: false,
-    real: false,
-    hundred: false,
-    thousand: true,
-    tenThousand: false
-  }
   
   let timeFolder = gui.addFolder("Time Controls");
-  timeFolder.add(timeScales, 'stopped').name('Stopped')
+  timeFolder.add(guiObject.timeScales, 'stopped').name('Stopped')
     .listen().onChange(function(){
-      setChecked("stopped", timeScales);
+      setChecked("stopped", guiObject.timeScales);
       timeScale = 0;
     });
 
-  timeFolder.add(timeScales, 'real').name('Real Time')
+  timeFolder.add(guiObject.timeScales, 'real').name('Real Time')
     .listen().onChange(function(){
-      setChecked("real", timeScales);
+      setChecked("real", guiObject.timeScales);
       timeScale = 1;
     });
 
-  timeFolder.add(timeScales, 'hundred').name('x100')
+  timeFolder.add(guiObject.timeScales, 'hundred').name('x100')
     .listen().onChange(function(){
-      setChecked("hundred", timeScales);
+      setChecked("hundred", guiObject.timeScales);
       timeScale = 100;
     });
 
-  timeFolder.add(timeScales, 'thousand').name('x1000')
+  timeFolder.add(guiObject.timeScales, 'thousand').name('x1000')
     .listen().onChange(function(){
-      setChecked("thousand", timeScales);
+      setChecked("thousand", guiObject.timeScales);
       timeScale = 1000;
     });
   
-  timeFolder.add(timeScales, 'tenThousand').name('x10000')
+  timeFolder.add(guiObject.timeScales, 'tenThousand').name('x10000')
     .listen().onChange(function(){
-      setChecked("tenThousand", timeScales);
+      setChecked("tenThousand", guiObject.timeScales);
       timeScale = 10000;
     });
 
-  let sizeScales = {
-    scaledup: true,
-    actualSize: false
-  };
-
   let scaleFolder = gui.addFolder("Size Controls");
-  scaleFolder.add(sizeScales, "scaledup").name("Scaled up")
+  scaleFolder.add(guiObject.sizeScales, "scaledup").name("Scaled up")
     .listen().onChange(function() {
-      setChecked("scaledup", sizeScales);
+      setChecked("scaledup", guiObject.sizeScales);
       let obj;
       for (obj of (objects)) {
         if(obj.name == "Sun")
@@ -346,9 +358,9 @@ function initGUI() {
       }
     });
 
-    scaleFolder.add(sizeScales, "actualSize").name("Actual size")
+    scaleFolder.add(guiObject.sizeScales, "actualSize").name("Actual size")
     .listen().onChange(function() {
-      setChecked("actualSize", sizeScales);
+      setChecked("actualSize", guiObject.sizeScales);
       let obj;
       for (obj of (objects)) {
         obj.scale.set(0.001, 0.001, 0.001);
