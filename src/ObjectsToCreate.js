@@ -139,11 +139,12 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_sun.jpg",
     type: shapes.sphere,
     dims: {
-      radius: 6000,
       actualRadius: 695.51,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.127,
+    day: 2116800,
     pos: {
       x: 0,
       y: 0,
@@ -155,11 +156,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/earth_8k.jpg",
     dims: {
-      radius: 6371,
       actualRadius: 6.371,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.409,
+    day: 86400,
     pos: {
       x: 0,
       y: 0,
@@ -171,11 +173,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_mars.jpg",
     dims: {
-      radius: 6000,
       actualRadius: 3.3895,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.440,
+    day: 90000,
     pos: {
       x: 0,
       y: 0,
@@ -187,11 +190,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_mercury.jpg",
     dims: {
-      radius: 6000,
       actualRadius: 2.4397,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.001,
+    day: 5068800,
     pos: {
       x: 0,
       y: 0,
@@ -203,11 +207,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_venus.jpg",
     dims: {
-      radius: 6000,
       actualRadius: 6.0518,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.046,
+    day: 20995200,
     pos: {
       x: 0,
       y: 0,
@@ -219,11 +224,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_jupiter.jpg",
     dims: {
-      radius: 6000,
       actualRadius: 69.911,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.055,
+    day: 36000,
     pos: {
       x: 0,
       y: 0,
@@ -235,11 +241,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_saturn.jpg",
     dims: {
-      radius: 6000,
       actualRadius: 58.232,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.467,
+    day: 39600,
     pos: {
       x: 0,
       y: 0,
@@ -251,11 +258,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_uranus.jpg",
     dims: {
-      radius: 6000,
       actualRadius: 25.362,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 1.435,
+    day: 61200,
     pos: {
       x: 0,
       y: 0,
@@ -267,11 +275,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_neptune.jpg",
     dims: {
-      radius: 6000,
       actualRadius: 24.622,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.494,
+    day: 57600,
     pos: {
       x: 0,
       y: 0,
@@ -282,13 +291,14 @@ export const SpaceObjects = {
 
   Ceres: {
     type: shapes.sphere,
-    texture: "./assets/textures/asteroid.jpg",
+    texture: "./assets/textures/2k_ceres.jpg",
     dims: {
-      radius: 6000,
       actualRadius: 0.473,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.183,
+    day: 145324800,
     pos: {
       x: 0,
       y: 0,
@@ -301,11 +311,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/asteroid.jpg",
     dims: {
-      radius: 6000,
       actualRadius: 0.2725,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.607,
+    day: 145065600,
     pos: {
       x: 0,
       y: 0,
@@ -318,11 +329,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/asteroid.jpg",
     dims: {
-      radius: 6000,
       actualRadius: 0.2627,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 0.4,
+    day: 113529600,
     pos: {
       x: 0,
       y: 0,
@@ -334,11 +346,12 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/pluto.png",
     dims: {
-      radius: 6000,
       actualRadius: 1.188,
       widthSegments: 32,
       heightSegments: 32
     },
+    tilt: 1.003,
+    day: 552096,
     pos: {
       x: 0,
       y: 0,

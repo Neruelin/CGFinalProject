@@ -13,7 +13,8 @@ import {
   EllipseCurve,
   Vector2,
   sRGBEncoding,
-  MeshBasicMaterial
+  MeshBasicMaterial,
+  Vector3
 } from "three";
 import shapes from "./Shapes";
 import { eccentricityFactor } from "./constants";
@@ -49,10 +50,10 @@ export default function shapePipeline(spec) {
       );
       break;
     case shapes.cone:
-      geo = new ConeBufferGeometry(spec.dims.radius, spec.dims.height);
+      geo = new ConeBufferGeometry(spec.dims.actualRadius, spec.dims.height);
       break;
     case shapes.torus:
-      geo = new TorusBufferGeometry(spec.dims.radius, spec.dims.tube);
+      geo = new TorusBufferGeometry(spec.dims.actualRadius, spec.dims.tube);
       break;
     case shapes.cube:
       geo = new BoxBufferGeometry(
@@ -101,6 +102,7 @@ export default function shapePipeline(spec) {
       obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
       obj.renderOrder = 3;
     }
+    obj.rotateOnAxis(new Vector3(0.0, 0.0, 1.0), -spec.tilt);
   }
   return obj;
 }
