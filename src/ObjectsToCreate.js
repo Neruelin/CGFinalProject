@@ -252,7 +252,12 @@ export const SpaceObjects = {
       y: 0,
       z: 0
     },
-    color: 0xff0000
+    color: 0xff0000,
+    rings: {
+      innerRad: 59,
+      outerRad: 137,
+      texture: "./assets/textures/top_down_rings.PNG"
+    }
   },
   Uranus: {
     type: shapes.sphere,

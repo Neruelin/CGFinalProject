@@ -15,7 +15,8 @@ import {
   SphereBufferGeometry,
   TextureLoader,
   WebGLRenderer,
-  Vector3
+  Vector3,
+  AxisHelper
   // OrthographicCamera
 } from "three";
 import * as dat from "dat.gui";
@@ -132,11 +133,6 @@ function initScene() {
 
     if (obj.name == "Sun")
       obj.scale.set(0.075, 0.075, 0.075);
-    
-    if (obj.name == "Saturn")
-    {
-
-    }
 
     objects.push(obj);
     scene.add(obj);
