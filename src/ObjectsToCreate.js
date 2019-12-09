@@ -1,5 +1,6 @@
 import shapes from "./Shapes";
 import { AU } from "./constants";
+import { Vector3 } from "three";
 export const Orbits = {
   Earth: {
     type: shapes.ellipse,
@@ -9,6 +10,11 @@ export const Orbits = {
       OrbitalInclination: 0,
       period: 1.0,
       eccentricity: 0.017
+    },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
     },
     color: 0xffffff
   },
@@ -21,6 +27,11 @@ export const Orbits = {
       period: 1.88,
       eccentricity: 0.094
     },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
+    },
     color: 0xf00f0f
   },
   Mercury: {
@@ -31,6 +42,11 @@ export const Orbits = {
       OrbitalInclination: 7.01,
       period: 0.241,
       eccentricity: 0.205
+    },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
     },
     color: 0x000fff
   },
@@ -43,6 +59,11 @@ export const Orbits = {
       period: 0.615,
       eccentricity: 0.007
     },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
+    },
     color: 0x00ffff
   },
   Jupiter: {
@@ -53,6 +74,11 @@ export const Orbits = {
       OrbitalInclination: 1.31,
       period: 11.86,
       eccentricity: 0.049
+    },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
     },
     color: 0xff0fff
   },
@@ -65,6 +91,11 @@ export const Orbits = {
       period: 457.0,
       eccentricity: 0.057
     },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
+    },
     color: 0xff00ff
   },
   Uranus: {
@@ -75,6 +106,11 @@ export const Orbits = {
       OrbitalInclination: 0.77,
       period: 84.0,
       eccentricity: 0.046
+    },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
     },
     color: 0xff000f
   },
@@ -87,6 +123,11 @@ export const Orbits = {
       period: 164.8,
       eccentricity: 0.011
     },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
+    },
     color: 0xf00000
   },
   Ceres: {
@@ -97,6 +138,11 @@ export const Orbits = {
       OrbitalInclination: 10.62,
       period: 4.6,
       eccentricity: 0.08
+    },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
     },
     color: 0xfffff0
   },
@@ -109,6 +155,16 @@ export const Orbits = {
       period: 4.6,
       eccentricity: 0.2305
     },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
+    },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
+    },
     color: 0xffff00
   },
   Vesta: {
@@ -119,6 +175,11 @@ export const Orbits = {
       OrbitalInclination: 5.58,
       period: 3.6,
       eccentricity: 0.09
+    },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
     },
     color: 0xfff000
   },
@@ -131,6 +192,11 @@ export const Orbits = {
       period: 248,
       eccentricity: 0.244
     },
+    pos: {
+      x: 0,
+      y: 0,
+      z: 0
+    },
     color: 0xf0f0f0
   }
 };
@@ -139,6 +205,7 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_sun.jpg",
     type: shapes.sphere,
     dims: {
+      mass: 1989000000000000000000000000000,
       radius: 6000,
       actualRadius: 695.51,
       widthSegments: 32,
@@ -155,6 +222,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/earth_8k.jpg",
     dims: {
+      mass: 5970000000000000000000000,
       radius: 6371,
       actualRadius: 6.371,
       widthSegments: 32,
@@ -171,6 +239,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_mars.jpg",
     dims: {
+      mass: 642000000000000000000000,
       radius: 6000,
       actualRadius: 3.3895,
       widthSegments: 32,
@@ -187,6 +256,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_mercury.jpg",
     dims: {
+      mass: 330000000000000000000000,
       radius: 6000,
       actualRadius: 2.4397,
       widthSegments: 32,
@@ -203,6 +273,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_venus.jpg",
     dims: {
+      mass: 4870000000000000000000000,
       radius: 6000,
       actualRadius: 6.0518,
       widthSegments: 32,
@@ -219,6 +290,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_jupiter.jpg",
     dims: {
+      mass: 1898000000000000000000000000,
       radius: 6000,
       actualRadius: 69.911,
       widthSegments: 32,
@@ -235,6 +307,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_saturn.jpg",
     dims: {
+      mass: 568000000000000000000000000,
       radius: 6000,
       actualRadius: 58.232,
       widthSegments: 32,
@@ -251,6 +324,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_uranus.jpg",
     dims: {
+      mass: 86800000000000000000000000,
       radius: 6000,
       actualRadius: 25.362,
       widthSegments: 32,
@@ -267,6 +341,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_neptune.jpg",
     dims: {
+      mass: 102000000000000000000000000,
       radius: 6000,
       actualRadius: 24.622,
       widthSegments: 32,
@@ -284,6 +359,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/asteroid.jpg",
     dims: {
+      mass: 895800000000000000000,
       radius: 6000,
       actualRadius: 0.473,
       widthSegments: 32,
@@ -301,6 +377,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/asteroid.jpg",
     dims: {
+      mass: 210800000000000000000,
       radius: 6000,
       actualRadius: 0.2725,
       widthSegments: 32,
@@ -318,6 +395,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/asteroid.jpg",
     dims: {
+      mass: 258900000000000000000,
       radius: 6000,
       actualRadius: 0.2627,
       widthSegments: 32,
@@ -334,6 +412,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/pluto.png",
     dims: {
+      mass: 14600000000000000000000,
       radius: 6000,
       actualRadius: 1.188,
       widthSegments: 32,
@@ -345,5 +424,23 @@ export const SpaceObjects = {
       z: 0
     },
     color: 0x0000ff
+  }
+};
+
+export const PhysicsObjects = {
+  Probe: {
+    type: shapes.cube,
+    dims: {
+      size: 30,
+      radius: 30,
+      mass: 500
+    },
+    velocity: new Vector3(0, 0, 100000),
+    pos: {
+      x: AU,
+      y: AU,
+      z: AU
+    },
+    color: 0x00ff00
   }
 };

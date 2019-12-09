@@ -1,0 +1,7 @@
+.Overlay:hover {
+  background-color: black;
+}
+
+body {
+  overflow: hidden;
+}

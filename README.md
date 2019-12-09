@@ -9,3 +9,8 @@ Simulating Perfect Astronautical Chore Expeditions project or the SPACE Project 
 ### To start Server:
 
     * Run `npm run start`
+
+    In another terminal:
+    * Run `npm run build`
+
+    * Refresh webpage

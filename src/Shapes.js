@@ -4,5 +4,6 @@ export default {
   box: sI++,
   cone: sI++,
   torus: sI++,
-  ellipse: sI++
+  ellipse: sI++,
+  cube: sI++
 };

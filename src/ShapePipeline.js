@@ -85,23 +85,27 @@ export default function shapePipeline(spec) {
     obj.rotation.x = RightAngle;
     obj.rotation.y = spec.dims.OrbitalInclination * RadsPerDegree;
     obj.rotation.z = RightAngle;
+  } else if (spec.type == shapes.cube) {
+    let mat = new MeshBasicMaterial({ color: spec.color });
+    obj = new Mesh(geo, mat);
   } else {
     let texture = new TextureLoader().load(spec.texture);
     texture.encoding = sRGBEncoding;
     texture.anisotrophy = 16;
-
-    if(spec.texture == "./assets/textures/2k_sun.jpg") {
-       let mat = new MeshBasicMaterial( {map:texture} );
-       mat.setValues({visible:false});
-
-       obj = new Mesh(geo, mat);
-       obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
-    } else {
-      let mat = new MeshStandardMaterial( {map:texture, metalness: 0.5, roughness: 1.0} );
+    if (spec.texture == "./assets/textures/2k_sun.jpg") {
+      let mat = new MeshBasicMaterial({ map: texture });
+      mat.setValues({ visible: false });
       obj = new Mesh(geo, mat);
-      obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
+    } else {
+      let mat = new MeshStandardMaterial({
+        map: texture,
+        metalness: 0.5,
+        roughness: 1.0
+      });
+      obj = new Mesh(geo, mat);
       obj.renderOrder = 3;
     }
   }
+  obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
   return obj;
 }

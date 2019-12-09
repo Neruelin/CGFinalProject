@@ -12,13 +12,24 @@ module.exports = {
     contentBase: "./dist"
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      cleanAfterEveryBuildPatterns: ["!/assets/**"]
+    }),
     new HtmlWebpackPlugin({
-      title: "Development"
+      title: "SPACE",
+      template: "./src/index.html"
     })
   ],
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist")
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"]
+      }
+    ]
   }
 };
