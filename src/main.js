@@ -41,9 +41,12 @@ let scene,
       setLockon("");
     },
     lockonDistance: 20,
-    timeScale: timeScale
+    timeScale: timeScale,
+    coldSun: false,
+    showOrbits: true
   },
   objects = [],
+  orbits = [],
   overlayDivs = [];
 
 function initControls() {
@@ -122,15 +125,15 @@ function initScene() {
 
   for (key of Object.keys(Orbits)) {
     let obj = shapePipeline(Orbits[key]);
-    objects.push(obj);
+    orbits.push(obj);
     scene.add(obj);
   }
 
-  let loader = new STLLoader();
-  loader.load("./assets/models/atlasv551.stl", function(geometry) {
-    let mat = new MeshBasicMaterial({ color: 0xffffff });
-    scene.add(new Mesh(geometry, mat));
-  });
+  // let loader = new STLLoader();
+  // loader.load("./assets/models/atlasv551.stl", function(geometry) {
+  //   let mat = new MeshBasicMaterial({ color: 0xffffff });
+  //   scene.add(new Mesh(geometry, mat));
+  // });
 
   const textureLoader = new TextureLoader();
 
@@ -275,9 +278,9 @@ function animate() {
 
 function initGUI() {
   let folder = gui.addFolder("Lock On");
-  folder.add(guiObject, "target").onChange(setLockon);
-  folder.add(guiObject, "lockonDistance", 1, 50);
-  folder.add(guiObject, "unlock");
+  folder.add(guiObject, "target").onChange(setLockon).name("Target");
+  folder.add(guiObject, "lockonDistance", 0.001, 25.0, 0.001).name("Zoom");
+  folder.add(guiObject, "unlock").name("Unlock");
 
   let timeScales = {
     real: false,
@@ -287,44 +290,77 @@ function initGUI() {
   }
   
   let timeFolder = gui.addFolder("Time Controls");
-  timeFolder
-    .add(timeScales, 'real')
-    .name('Real Time')
+  timeFolder.add(timeScales, 'real').name('Real Time')
     .listen().onChange(function(){
-      setChecked("real");
+      setChecked("real", timeScales);
       timeScale = 1;
     });
 
-  timeFolder
-    .add(timeScales, 'hundred')
-    .name('x100')
+  timeFolder.add(timeScales, 'hundred').name('x100')
     .listen().onChange(function(){
-      setChecked("hundred");
+      setChecked("hundred", timeScales);
       timeScale = 100;
     });
 
-  timeFolder
-    .add(timeScales, 'thousand')
-    .name('x1000')
+  timeFolder.add(timeScales, 'thousand').name('x1000')
     .listen().onChange(function(){
-      setChecked("thousand");
+      setChecked("thousand", timeScales);
       timeScale = 1000;
     });
   
-  timeFolder
-    .add(timeScales, 'tenThousand')
-    .name('x10000')
+  timeFolder.add(timeScales, 'tenThousand').name('x10000')
     .listen().onChange(function(){
-      setChecked("tenThousand");
+      setChecked("tenThousand", timeScales);
       timeScale = 10000;
     });
-  
-  function setChecked( prop ){
-    for (let param in timeScales){
-      timeScales[param] = false;
+
+  let sizeScales = {
+    scaledup: true,
+    actualSize: false
+  };
+
+  let scaleFolder = gui.addFolder("Size Controls");
+  scaleFolder.add(sizeScales, "scaledup").name("Scaled up")
+    .listen().onChange(function() {
+      setChecked("scaledup", sizeScales);
+      let obj;
+      for (obj of (objects)) {
+        obj.scale.set(1.0, 1.0, 1.0);
+      }
+    });
+
+    scaleFolder.add(sizeScales, "actualSize").name("Actual size")
+    .listen().onChange(function() {
+      setChecked("actualSize", sizeScales);
+      let obj;
+      for (obj of (objects)) {
+        obj.scale.set(0.001, 0.001, 0.001);
+      }
+    });
+
+  function setChecked( prop, list ){
+    for (let param in list){
+      list[param] = false;
     }
-    timeScales[prop] = true;
+    list[prop] = true;
   }
+
+  let graphicalOptions = gui.addFolder("Graphical Options");
+  graphicalOptions.add(guiObject, "coldSun").name("Ultraviolet Sun")
+    .listen().onChange(function(flag) {
+
+    });
+
+  graphicalOptions.add(guiObject, "showOrbits").name("Show orbits")
+    .listen().onChange(function(flag) {
+      let obj;
+      for (obj of orbits) {
+        if (flag)
+          obj.visible = true;
+         else
+          obj.visible = false;
+      }
+    });
 }
 
 function init() {
