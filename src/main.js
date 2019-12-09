@@ -32,6 +32,7 @@ import {
   Gravity,
   SpeedLimit
 } from "./constants";
+import Shapes from "./Shapes";
 
 let scene,
   camera,
@@ -41,6 +42,7 @@ let scene,
   startTime = 81363000000000,
   lastTime = Date.now(),
   timeScale = 1,
+  addedMarkers = [],
   gui = new dat.GUI({ autoPlace: true }),
   guiObject = {
     target: "",
@@ -49,7 +51,14 @@ let scene,
     },
     lockonDistance: 20,
     timeScale: timeScale,
-    paused: false
+    paused: false,
+    clearMarkers: () => {
+      let marker;
+      for (marker of addedMarkers) {
+        scene.remove(marker);
+      }
+    },
+    placeMarkers: false
   },
   objects = [],
   overlayDivs = [];
@@ -87,7 +96,7 @@ function initRenderer() {
 }
 
 function parametricEllipse(x = 0, y = 0, t, period, eccentricity) {
-  let major = x + y;
+  let major = (x + y) / 2;
   let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
 
   return {
@@ -239,6 +248,8 @@ function updateObjectPositions() {
       Orbits[key].dims.eccentricity | 0
     );
 
+    let oldPosition = SpaceObjects[key].obj.position.clone();
+
     SpaceObjects[key].obj.position.y =
       pos.x * Math.sin((Orbits[key].dims.OrbitalInclination * Math.PI) / 180);
 
@@ -247,6 +258,10 @@ function updateObjectPositions() {
 
     SpaceObjects[key].obj.position.z =
       pos.y + Orbits[key].dims.aphelion - Orbits[key].dims.perihelion;
+
+    SpaceObjects[key].velocity = new Vector3()
+      .subVectors(oldPosition, SpaceObjects[key].obj.position)
+      .divideScalar(lastTime - Date.now());
   }
 }
 
@@ -291,6 +306,27 @@ function updateOverlayPositions() {
       pos.y = 0;
     }
 
+    if (key !== "Sun") {
+      overlayDivs[key].innerText =
+        key +
+        "\n" +
+        (SpaceObjects[key].obj.position.x / AU).toPrecision(2) +
+        "AU\n" +
+        (SpaceObjects[key].obj.position.y / AU).toPrecision(2) +
+        "AU\n" +
+        (SpaceObjects[key].obj.position.z / AU).toPrecision(2) +
+        "AU\n" +
+        (SpaceObjects[key].obj.position.length() / AU).toPrecision(2) +
+        "AU\n" +
+        SpaceObjects[key].velocity.x.toPrecision(5) +
+        "\n" +
+        SpaceObjects[key].velocity.y.toPrecision(5) +
+        "\n" +
+        SpaceObjects[key].velocity.z.toPrecision(5) +
+        "\n" +
+        SpaceObjects[key].velocity.length().toPrecision(5);
+    }
+
     overlayDivs[key].style.transform = `translate(-50%, -50%) translate(${
       pos.x
     }px,${pos.y - 10}px)`;
@@ -313,13 +349,13 @@ function updateOverlayPositions() {
     overlayDivs[key].innerText =
       key +
       "\n" +
-      (PhysicsObjects[key].velocity.x / timeScale).toPrecision(5) +
+      PhysicsObjects[key].velocity.x.toPrecision(5) +
       "\n" +
-      (PhysicsObjects[key].velocity.y / timeScale).toPrecision(5) +
+      PhysicsObjects[key].velocity.y.toPrecision(5) +
       "\n" +
-      (PhysicsObjects[key].velocity.z / timeScale).toPrecision(5) +
+      PhysicsObjects[key].velocity.z.toPrecision(5) +
       "\n" +
-      (PhysicsObjects[key].velocity.length() / timeScale).toPrecision(5);
+      PhysicsObjects[key].velocity.length().toPrecision(5);
 
     // console.log(PhysicsObjects[key].velocity);
 
@@ -391,10 +427,14 @@ function animate() {
 }
 
 function initGUI() {
-  let folder = gui.addFolder("Lock On");
-  folder.add(guiObject, "target").onChange(setLockon);
-  folder.add(guiObject, "lockonDistance", 1, 50);
-  folder.add(guiObject, "unlock");
+  let lockOnFolder = gui.addFolder("Lock On");
+  lockOnFolder.add(guiObject, "target").onChange(setLockon);
+  lockOnFolder.add(guiObject, "lockonDistance", 1, 50);
+  lockOnFolder.add(guiObject, "unlock");
+
+  let markerFolder = gui.addFolder("Marker");
+  markerFolder.add(guiObject, "placeMarkers");
+  markerFolder.add(guiObject, "clearMarkers");
 
   let timeScales = {
     real: true,
@@ -468,14 +508,46 @@ function init() {
   animate();
 }
 
-function addAt(x, y, z) {
+function addAt(x, y, z, col = 0xff0000) {
   let geo = new SphereBufferGeometry(0.01 * AU, 10, 10);
-  let mat = new MeshBasicMaterial({ color: 0xff0000 });
+  let mat = new MeshBasicMaterial({ color: col });
   let mesh = new Mesh(geo, mat);
   mesh.position.set(x, y, z);
   mesh.renderOrder = 10;
   scene.add(mesh);
+  return mesh;
 }
+
+function createProbe(pos, vel, color, name) {
+  PhysicsObjects[name] = {
+    type: Shapes.cube,
+    dims: {
+      size: 30,
+      radius: 30,
+      mass: 500
+    },
+    velocity: vel,
+    pos: {
+      x: pos.x,
+      y: pos.y,
+      z: pos.z
+    },
+    color: color
+  };
+  PhysicsObjects[name].obj = shapePipeline(PhysicsObjects[name]);
+  overlayDivs[name] = createOverlayDiv(name);
+  document.body.appendChild(overlayDivs[name]);
+  scene.add(PhysicsObjects[name].obj);
+
+  setInterval(() => {
+    let a = PhysicsObjects[name].obj.position;
+    if (guiObject.placeMarkers) {
+      addedMarkers.push(addAt(a.x, a.y, a.z, color));
+    }
+  }, 5000);
+}
+
+console.log(createProbe);
 
 function setLockon(target) {
   if (target && (target in SpaceObjects || target in PhysicsObjects)) {
@@ -490,9 +562,22 @@ function setLockon(target) {
 }
 
 init();
-console.log(PhysicsObjects);
 
 setInterval(() => {
   let a = PhysicsObjects.Probe.obj.position;
-  addAt(a.x, a.y, a.z);
-}, 5000);
+  if (guiObject.placeMarkers) {
+    addedMarkers.push(addAt(a.x, a.y, a.z));
+  }
+}, 1000);
+
+// createProbe(
+//   SpaceObjects.Earth.obj.position,
+//   SpaceObjects.Earth.velocity,
+//   0x0000ff,
+//   "Probe2"
+// );
+
+console.log(PhysicsObjects);
+console.log(SpaceObjects);
+
+// console.log(overlayDivs);

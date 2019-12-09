@@ -435,11 +435,11 @@ export const PhysicsObjects = {
       radius: 30,
       mass: 500
     },
-    velocity: new Vector3(0, 0, 100000),
+    velocity: new Vector3(0, 0, 500000),
     pos: {
       x: AU,
-      y: AU,
-      z: AU
+      y: 0,
+      z: 0
     },
     color: 0x00ff00
   }
