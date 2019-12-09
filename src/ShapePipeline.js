@@ -92,9 +92,8 @@ export default function shapePipeline(spec) {
 
     if(spec.texture == "./assets/textures/2k_sun.jpg") {
        let mat = new MeshBasicMaterial( {map:texture} );
-       mat.setValues({visible:false});
-
        obj = new Mesh(geo, mat);
+       obj.visible = false;
        obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
     } else {
       let mat = new MeshStandardMaterial( {map:texture, metalness: 0.5, roughness: 1.0} );

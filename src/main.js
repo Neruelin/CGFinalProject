@@ -45,6 +45,8 @@ let scene,
     coldSun: false,
     showOrbits: true
   },
+  sun,
+  sunLight,
   objects = [],
   orbits = [],
   overlayDivs = [];
@@ -115,6 +117,11 @@ function initScene() {
   for (key of Object.keys(SpaceObjects)) {
     let obj = shapePipeline(SpaceObjects[key]);
     SpaceObjects[key].obj = obj;
+    obj.name = key;
+
+    if (obj.name == "Sun")
+      obj.scale.set(0.075, 0.075, 0.075);
+
     objects.push(obj);
     scene.add(obj);
 
@@ -137,7 +144,7 @@ function initScene() {
 
   const textureLoader = new TextureLoader();
 
-  let sunLight = new PointLight(0xffffff, 2, 0, 0);
+  sunLight = new PointLight(0xffffff, 2, 0, 0);
   sunLight.position.set(0, 0, 0);
 
   let flare = textureLoader.load("./assets/textures/flare.png");
@@ -283,6 +290,7 @@ function initGUI() {
   folder.add(guiObject, "unlock").name("Unlock");
 
   let timeScales = {
+    stopped: false,
     real: false,
     hundred: false,
     thousand: true,
@@ -290,6 +298,12 @@ function initGUI() {
   }
   
   let timeFolder = gui.addFolder("Time Controls");
+  timeFolder.add(timeScales, 'stopped').name('Stopped')
+    .listen().onChange(function(){
+      setChecked("stopped", timeScales);
+      timeScale = 0;
+    });
+
   timeFolder.add(timeScales, 'real').name('Real Time')
     .listen().onChange(function(){
       setChecked("real", timeScales);
@@ -325,7 +339,10 @@ function initGUI() {
       setChecked("scaledup", sizeScales);
       let obj;
       for (obj of (objects)) {
-        obj.scale.set(1.0, 1.0, 1.0);
+        if(obj.name == "Sun")
+          obj.scale.set(0.075, 0.075, 0.075);
+        else
+          obj.scale.set(1.0, 1.0, 1.0);
       }
     });
 
@@ -348,7 +365,19 @@ function initGUI() {
   let graphicalOptions = gui.addFolder("Graphical Options");
   graphicalOptions.add(guiObject, "coldSun").name("Ultraviolet Sun")
     .listen().onChange(function(flag) {
-
+      let obj;
+      for (obj of objects) {
+        if (obj.name == "Sun")
+        {
+          if (flag) {
+            sunLight.children[0].visible = false;
+            obj.visible = true;
+          } else {
+            sunLight.children[0].visible = true;
+            obj.visible = false;
+          }
+        }
+      }
     });
 
   graphicalOptions.add(guiObject, "showOrbits").name("Show orbits")
