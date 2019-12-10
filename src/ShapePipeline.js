@@ -64,10 +64,10 @@ export default function shapePipeline(spec) {
       break;
     case shapes.ellipse:
       let eccentricity = spec.dims.eccentricity | 0;
-      let major = spec.dims.aphelion + spec.dims.perihelion;
+      let major = (spec.dims.aphelion + spec.dims.perihelion);
       let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
       let curve = new EllipseCurve(
-        spec.dims.aphelion - spec.dims.perihelion,
+        (spec.dims.aphelion - spec.dims.perihelion),
         0,
         minor,
         major
@@ -86,6 +86,9 @@ export default function shapePipeline(spec) {
     obj.rotation.x = RightAngle;
     obj.rotation.y = spec.dims.OrbitalInclination * RadsPerDegree;
     obj.rotation.z = RightAngle;
+  } else if (spec.type == shapes.cube) {
+      let mat =new MeshBasicMaterial( {color: spec.color});
+      obj = new Mesh(geo, mat);
   } else {
     let texture = new TextureLoader().load(spec.texture);
     texture.encoding = sRGBEncoding;
@@ -95,14 +98,15 @@ export default function shapePipeline(spec) {
        let mat = new MeshBasicMaterial( {map:texture} );
        obj = new Mesh(geo, mat);
        obj.visible = false;
-       obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
     } else {
       let mat = new MeshStandardMaterial( {map:texture, metalness: 0.5, roughness: 1.0} );
       obj = new Mesh(geo, mat);
-      obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
       obj.renderOrder = 3;
     }
     obj.rotateOnAxis(new Vector3(0.0, 0.0, 1.0), -spec.tilt);
   }
+
+  if (spec.pos)
+    obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
   return obj;
 }

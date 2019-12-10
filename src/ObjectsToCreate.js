@@ -1,5 +1,6 @@
 import shapes from "./Shapes";
 import { AU } from "./constants";
+import { Vector3 } from "three";
 export const Orbits = {
   Earth: {
     type: shapes.ellipse,
@@ -139,6 +140,7 @@ export const SpaceObjects = {
     texture: "./assets/textures/2k_sun.jpg",
     type: shapes.sphere,
     dims: {
+      mass: 1989000000000000000000000000000,
       actualRadius: 695.51,
       widthSegments: 32,
       heightSegments: 32
@@ -156,6 +158,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/earth_8k.jpg",
     dims: {
+      mass: 5970000000000000000000000,
       actualRadius: 6.371,
       widthSegments: 32,
       heightSegments: 32
@@ -173,6 +176,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_mars.jpg",
     dims: {
+      mass: 642000000000000000000000,
       actualRadius: 3.3895,
       widthSegments: 32,
       heightSegments: 32
@@ -190,6 +194,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_mercury.jpg",
     dims: {
+      mass: 330000000000000000000000,
       actualRadius: 2.4397,
       widthSegments: 32,
       heightSegments: 32
@@ -207,6 +212,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_venus.jpg",
     dims: {
+      mass: 4870000000000000000000000,
       actualRadius: 6.0518,
       widthSegments: 32,
       heightSegments: 32
@@ -224,6 +230,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_jupiter.jpg",
     dims: {
+      mass: 1898000000000000000000000000,
       actualRadius: 69.911,
       widthSegments: 32,
       heightSegments: 32
@@ -241,6 +248,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_saturn.jpg",
     dims: {
+      mass: 568000000000000000000000000,
       actualRadius: 58.232,
       widthSegments: 32,
       heightSegments: 32
@@ -258,6 +266,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_uranus.jpg",
     dims: {
+      mass: 86800000000000000000000000,
       actualRadius: 25.362,
       widthSegments: 32,
       heightSegments: 32
@@ -275,6 +284,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_neptune.jpg",
     dims: {
+      mass: 102000000000000000000000000,
       actualRadius: 24.622,
       widthSegments: 32,
       heightSegments: 32
@@ -293,6 +303,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/2k_ceres.jpg",
     dims: {
+      mass: 895800000000000000000,
       actualRadius: 0.473,
       widthSegments: 32,
       heightSegments: 32
@@ -311,6 +322,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/asteroid.jpg",
     dims: {
+      mass: 210800000000000000000,
       actualRadius: 0.2725,
       widthSegments: 32,
       heightSegments: 32
@@ -329,6 +341,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/asteroid.jpg",
     dims: {
+      mass: 258900000000000000000,
       actualRadius: 0.2627,
       widthSegments: 32,
       heightSegments: 32
@@ -346,6 +359,7 @@ export const SpaceObjects = {
     type: shapes.sphere,
     texture: "./assets/textures/pluto.png",
     dims: {
+      mass: 14600000000000000000000,
       actualRadius: 1.188,
       widthSegments: 32,
       heightSegments: 32
@@ -355,6 +369,39 @@ export const SpaceObjects = {
     pos: {
       x: 0,
       y: 0,
+      z: 0
+    },
+    color: 0x0000ff
+  }
+};
+
+export const PhysicsObjects = {
+  Probe1: {
+    type: shapes.cube,
+    dims: {
+      size: 30,
+      radius: 30,
+      mass: 500
+    },
+    velocity: new Vector3(0, 0, 500),
+    pos: {
+      x: AU,
+      y: 0,
+      z: 0
+    },
+    color: 0x00ff00
+  },
+  Probe2: {
+    type: shapes.cube,
+    dims: {
+      size: 30,
+      radius: 30,
+      mass: 500
+    },
+    velocity: new Vector3(0, 0, 50000),
+    pos: {
+      x: AU,
+      y: AU,
       z: 0
     },
     color: 0x0000ff
