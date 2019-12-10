@@ -378,23 +378,23 @@ export const SpaceObjects = {
     },
     color: 0x0000ff
   },
-  Moon: {
-    type: shapes.sphere,
-    texture: "./assets/textures/8k_moon.jpg",
-    dims: {
-      actualRadius: 1.7371,
-      widthSegments: 32,
-      heightSegments: 32
-    },
-    tilt: 0,
-    day: 2332800,
-    pos: {
-      x: 10000000,
-      y: 0,
-      z: 0
-    },
-    color: 0x0000ff
-  },
+  // Moon: {
+  //   type: shapes.sphere,
+  //   texture: "./assets/textures/8k_moon.jpg",
+  //   dims: {
+  //     actualRadius: 1.7371,
+  //     widthSegments: 32,
+  //     heightSegments: 32
+  //   },
+  //   tilt: 0,
+  //   day: 2332800,
+  //   pos: {
+  //     x: 10000000,
+  //     y: 0,
+  //     z: 0
+  //   },
+  //   color: 0x0000ff
+  // },
 };
 
 export const PhysicsObjects = {
