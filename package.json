@@ -18,8 +18,9 @@
     "webpack-dev-server": "^3.9.0"
   },
   "scripts": {
+    "start": "npx webpack-dev-server --open",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server --open",
+    "startDev": "webpack-dev-server --open",
     "build": "webpack && xcopy /E /I .\\src\\assets .\\dist\\assets && xcopy /Y /E /I .\\dist .\\docs ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -27,7 +28,7 @@
     "type": "git",
     "url": "git+https://github.com/Neruelin/CGFinalProject.git"
   },
-  "author": "",
+  "author": "Tyler McFadden <neruelin@gmail.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Neruelin/CGFinalProject/issues"
