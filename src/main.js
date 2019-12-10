@@ -215,8 +215,8 @@ function initScene() {
 function toScreenPosition(obj, camera) {
   var vector = new Vector3();
 
-  var widthHalf = 0.5 * renderer.getContext().canvas.width;
-  var heightHalf = 0.5 * renderer.getContext().canvas.height;
+  var widthHalf = 0.5 * document.body.clientWidth;
+  var heightHalf = 0.5 * document.body.clientHeight;
 
   obj.updateMatrixWorld(true, false);
   obj.getWorldPosition(vector);
@@ -364,7 +364,7 @@ function updateOverlayPositions() {
       }
     }
 
-    overlayDivs[key].style.transform = `translate(-50%, -50%) translate(${
+    overlayDivs[key].style.transform = `translate(${
       pos.x
     }px,${pos.y - 10}px)`;
   }

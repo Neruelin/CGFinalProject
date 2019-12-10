@@ -20,6 +20,7 @@
   "scripts": {
     "start": "npx webpack-dev-server --open",
     "watch": "webpack --watch",
+    "buildLinux": "webpack && cp -rf ./src/assets ./dist/assets",
     "startDev": "webpack-dev-server --open",
     "build": "webpack && xcopy /E /I .\\src\\assets .\\dist\\assets && xcopy /Y /E /I .\\dist .\\docs ",
     "test": "echo \"Error: no test specified\" && exit 1"
