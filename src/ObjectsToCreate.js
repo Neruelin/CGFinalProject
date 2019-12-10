@@ -380,10 +380,11 @@ export const PhysicsObjects = {
     type: shapes.cube,
     dims: {
       size: 30,
+      actualRadius: 30,
       radius: 30,
       mass: 500
     },
-    velocity: new Vector3(0, 0, 500),
+    velocity: new Vector3(0, 0, 500000),
     pos: {
       x: AU,
       y: 0,
@@ -391,19 +392,68 @@ export const PhysicsObjects = {
     },
     color: 0x00ff00
   },
-  Probe2: {
+  Probe5: {
     type: shapes.cube,
     dims: {
       size: 30,
+      actualRadius: 30,
       radius: 30,
       mass: 500
     },
-    velocity: new Vector3(0, 0, 50000),
+    velocity: new Vector3(0, 300000, 0),
     pos: {
       x: AU,
-      y: AU,
+      y: 0,
+      z: 0
+    },
+    color: 0x00ffff
+  },
+  RocketshipsAndButterflies: {
+    type: shapes.cube,
+    dims: {
+      size: 30,
+      actualRadius: 30,
+      radius: 30,
+      mass: 500
+    },
+    velocity: new Vector3(0, 0, 100000),
+    pos: {
+      x: AU,
+      y: 0,
       z: 0
     },
     color: 0x0000ff
+  },
+  ToInfinityAndBeyond: {
+    type: shapes.cube,
+    dims: {
+      size: 30,
+      actualRadius: 30,
+      radius: 30,
+      mass: 500
+    },
+    velocity: new Vector3(0, 0, 10000),
+    pos: {
+      x: AU,
+      y: 0,
+      z: 0
+    },
+    color: 0xff0000
+  },
+  Probe4: {
+    type: shapes.cube,
+    dims: {
+      size: 30,
+      actualRadius: 30,
+      radius: 30,
+      mass: 500
+    },
+    velocity: new Vector3(0, 0, 1000000),
+    pos: {
+      x: AU,
+      y: 0,
+      z: 0
+    },
+    color: 0xff00ff
   }
 };

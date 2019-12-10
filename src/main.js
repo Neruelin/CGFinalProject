@@ -1,5 +1,4 @@
 import {
-  AxesHelper,
   AmbientLight,
   BackSide,
   BoxBufferGeometry,
@@ -16,12 +15,11 @@ import {
   TextureLoader,
   WebGLRenderer,
   Vector3
-  // OrthographicCamera
 } from "three";
+import "./styles/app.css";
 import * as dat from "dat.gui";
 import { OrbitControls } from "./OrbitControls";
 import { Lensflare, LensflareElement } from "./Lensflare";
-import STLLoader from "./STLLoader";
 import { Orbits, SpaceObjects, PhysicsObjects } from "./ObjectsToCreate";
 import shapePipeline from "./ShapePipeline";
 
@@ -113,7 +111,7 @@ function initRenderer() {
 }
 
 function parametricEllipse(x = 0, y = 0, t, period, eccentricity) {
-  let major = (x + y);
+  let major = (x + y)/ 2;
   let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
 
   return {
@@ -126,11 +124,10 @@ function createOverlayDiv(key) {
   let div = document.createElement("div");
   div.appendChild(document.createTextNode(key));
   div.id = key;
+  div.className = "Overlay";
   div.onclick = e => {
     setLockon(key);
   };
-  div.style.cssText =
-    "position: absolute; top: 0px; left: 0px; border: 1px solid green; color: green; background-color: rgba(1,1,1,0.2);";
   return div;
 }
 
@@ -138,9 +135,6 @@ function initScene() {
   scene = new Scene();
   scene.background = new Color(background);
   scene.add(camera);
-
-  // let axes2 = new AxisHelper(1000000000);
-  // scene.add(axes2);
 
   let key;
   for (key of Object.keys(SpaceObjects)) {
@@ -177,12 +171,6 @@ function initScene() {
     document.body.appendChild(overlayDivs[key]);
   }
 
-  // let loader = new STLLoader();
-  // loader.load("./assets/models/atlasv551.stl", function(geometry) {
-  //   let mat = new MeshBasicMaterial({ color: 0xffffff });
-  //   scene.add(new Mesh(geometry, mat));
-  // });
-
   const textureLoader = new TextureLoader();
 
   sunLight = new PointLight(0xffffff, 2, 0, 0);
@@ -218,7 +206,7 @@ function initScene() {
 
   shaderMat.uniforms.tEquirect.value = skyTexture;
 
-  const plane = new BoxBufferGeometry(1000000000, 1000000000, 1000000000);
+  const plane = new BoxBufferGeometry(200 * AU, 200 * AU, 200 * AU);
   sky = new Mesh(plane, shaderMat);
   scene.add(sky);
 }
@@ -473,9 +461,9 @@ function updatePhysicsObjectPositions() {
 
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
   updateObjectPositions();
   updatePhysicsObjectPositions();
+  controls.update();
   updateCameraPosition();
   updateOverlayPositions();
   renderer.render(scene, camera);

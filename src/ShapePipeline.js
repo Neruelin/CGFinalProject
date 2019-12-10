@@ -64,7 +64,7 @@ export default function shapePipeline(spec) {
       break;
     case shapes.ellipse:
       let eccentricity = spec.dims.eccentricity | 0;
-      let major = (spec.dims.aphelion + spec.dims.perihelion);
+      let major = (spec.dims.aphelion + spec.dims.perihelion) / 2;
       let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
       let curve = new EllipseCurve(
         (spec.dims.aphelion - spec.dims.perihelion),
