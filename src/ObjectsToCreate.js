@@ -252,7 +252,12 @@ export const SpaceObjects = {
       y: 0,
       z: 0
     },
-    color: 0xff0000
+    color: 0xff0000,
+    rings: {
+      innerRad: 59,
+      outerRad: 137,
+      texture: "./assets/textures/top_down_rings.PNG"
+    }
   },
   Uranus: {
     type: shapes.sphere,
@@ -358,5 +363,22 @@ export const SpaceObjects = {
       z: 0
     },
     color: 0x0000ff
-  }
+  },
+  Moon: {
+    type: shapes.sphere,
+    texture: "./assets/textures/8k_moon.jpg",
+    dims: {
+      actualRadius: 1.7371,
+      widthSegments: 32,
+      heightSegments: 32
+    },
+    tilt: 0,
+    day: 2332800,
+    pos: {
+      x: 10000000,
+      y: 0,
+      z: 0
+    },
+    color: 0x0000ff
+  },
 };

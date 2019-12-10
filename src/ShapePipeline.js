@@ -6,15 +6,15 @@ import {
   ConeBufferGeometry,
   TorusBufferGeometry,
   SphereBufferGeometry,
+  RingGeometry,
   TextureLoader,
   Mesh,
   Line,
-  Points,
   EllipseCurve,
-  Vector2,
   sRGBEncoding,
   MeshBasicMaterial,
-  Vector3
+  Vector3,
+  DoubleSide,
 } from "three";
 import shapes from "./Shapes";
 import { eccentricityFactor } from "./constants";
@@ -100,8 +100,18 @@ export default function shapePipeline(spec) {
       let mat = new MeshStandardMaterial( {map:texture, metalness: 0.5, roughness: 1.0} );
       obj = new Mesh(geo, mat);
       obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
-      obj.renderOrder = 3;
     }
+
+    if (spec.texture == "./assets/textures/2k_saturn.jpg") {
+      let ringGeo = new RingGeometry(spec.rings.innerRad *1000, spec.rings.outerRad *1000, 32, 8);
+      let ringTexture = new TextureLoader().load(spec.rings.texture);
+      let ringMat = new MeshStandardMaterial( {map:ringTexture, metalness: 0.5, roughness: 1.0, side: DoubleSide} );
+      let rings = new Mesh(ringGeo, ringMat);
+      rings.rotateOnAxis(new Vector3(1.0, 0.0, 0.0), Math.PI/2);
+      obj.add(rings);
+    }
+
+    obj.renderOrder = 3;
     obj.rotateOnAxis(new Vector3(0.0, 0.0, 1.0), -spec.tilt);
   }
   return obj;
