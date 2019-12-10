@@ -6,18 +6,18 @@ import {
   ConeBufferGeometry,
   TorusBufferGeometry,
   SphereBufferGeometry,
+  RingGeometry,
   TextureLoader,
   Mesh,
   Line,
-  Points,
   EllipseCurve,
-  Vector2,
   sRGBEncoding,
   MeshBasicMaterial,
-  Vector3
+  Vector3,
+  DoubleSide,
 } from "three";
 import shapes from "./Shapes";
-import { eccentricityFactor } from "./constants";
+import { eccentricityFactor, scaleUp } from "./constants";
 
 function parametricEllipse(x = 0, y = 0, t, period, eccentricity) {
   let major = x + y;
@@ -37,7 +37,7 @@ export default function shapePipeline(spec) {
   switch (spec.type) {
     case shapes.sphere:
       geo = new SphereBufferGeometry(
-        spec.dims.actualRadius * 1000,
+        spec.dims.actualRadius * scaleUp,
         spec.dims.widthSegments,
         spec.dims.heightSegments
       );
@@ -103,6 +103,17 @@ export default function shapePipeline(spec) {
       obj = new Mesh(geo, mat);
       obj.renderOrder = 3;
     }
+
+    if (spec.texture == "./assets/textures/2k_saturn.jpg") {
+      let ringGeo = new RingGeometry(spec.rings.innerRad * scaleUp, spec.rings.outerRad * scaleUp, 32, 8);
+      let ringTexture = new TextureLoader().load(spec.rings.texture);
+      let ringMat = new MeshStandardMaterial( {map:ringTexture, metalness: 0.5, roughness: 1.0, side: DoubleSide} );
+      let rings = new Mesh(ringGeo, ringMat);
+      rings.rotateOnAxis(new Vector3(1.0, 0.0, 0.0), Math.PI/2);
+      obj.add(rings);
+    }
+
+    obj.renderOrder = 3;
     obj.rotateOnAxis(new Vector3(0.0, 0.0, 1.0), -spec.tilt);
   }
 

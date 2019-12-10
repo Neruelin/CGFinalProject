@@ -5,16 +5,16 @@ import {
   Color,
   LinearFilter,
   Mesh,
-  MeshBasicMaterial,
   PerspectiveCamera,
   PointLight,
   Scene,
   ShaderLib,
   ShaderMaterial,
-  SphereBufferGeometry,
   TextureLoader,
   WebGLRenderer,
-  Vector3
+  Vector3,
+  MeshBasicMaterial,
+  SphereBufferGeometry,
 } from "three";
 import "./styles/app.css";
 import * as dat from "dat.gui";
@@ -29,7 +29,8 @@ import {
   background,
   farOcclusionDistance,
   Gravity,
-  SpeedLimit
+  SpeedLimit,
+  scaleUp
 } from "./constants";
 
 let scene,
@@ -143,7 +144,7 @@ function initScene() {
     obj.name = key;
 
     if (key == "Sun")
-      obj.scale.set(0.075, 0.075, 0.075);
+      obj.scale.set(0.0075, 0.0075, 0.0075);
 
     objects.push(obj);
     scene.add(obj);
@@ -251,7 +252,7 @@ function updateObjectPositions() {
     SpaceObjects[key].obj
       .rotateOnAxis(new Vector3(0, 1, 0), ((2*Math.PI) / SpaceObjects[key].day) * timeScale);
 
-    if (key == "Sun") continue;
+    if (key == "Sun" || key == "Moon") continue;
     let period = Orbits[key].dims.period;
 
     let pos = parametricEllipse(
@@ -297,7 +298,7 @@ function updateCameraPosition () {
     let norm = obj2cam.normalize();
     let dist;
     if (guiObject.sizeScales.scaledup)
-      dist = SpaceObjects[lockon].dims.actualRadius * 1000 * guiObject.lockonDistance;
+      dist = SpaceObjects[lockon].dims.actualRadius * scaleUp * guiObject.lockonDistance;
     else
       dist = SpaceObjects[lockon].dims.actualRadius * guiObject.lockonDistance;
     let nXd = new Vector3(norm.x * dist, norm.y * dist, norm.z * dist);
@@ -311,7 +312,7 @@ function updateCameraPosition () {
     let norm = obj2cam.normalize();
     let dist;
     if (guiObject.sizeScales.scaledup)
-      dist = PhysicsObjects[lockon].dims.actualRadius * 1000 * guiObject.lockonDistance;
+      dist = PhysicsObjects[lockon].dims.actualRadius * scaleUp * guiObject.lockonDistance;
     else
       dist = PhysicsObjects[lockon].dims.actualRadius * guiObject.lockonDistance;
     let nXd = new Vector3(norm.x * dist, norm.y * dist, norm.z * dist);
@@ -324,6 +325,7 @@ function updateCameraPosition () {
 function updateOverlayPositions() {
   let key;
   for (key of Object.keys(SpaceObjects)) {
+    if(key == "Moon") continue;
     let pos = toScreenPosition(SpaceObjects[key].obj, camera);
     if (
       pos.x < renderer.getContext().canvas.width &&
@@ -633,3 +635,5 @@ function createProbe(pos, vel, color, name) {
 }
 
 init();
+
+console.log(PhysicsObjects);
