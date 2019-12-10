@@ -49,8 +49,7 @@ let scene,
       hundred: false,
       thousand: true,
       tenThousand: false
-    },
-    toTheMoon: false
+    }
   },
   sun,
   sunLight,
@@ -128,8 +127,6 @@ function initScene() {
 
     objects.push(obj);
     scene.add(obj);
-
-    if(key == "Moon") continue;
 
     let div = createOverlayDiv(key);
     overlayDivs[key] = div;
@@ -386,18 +383,6 @@ function initGUI() {
           obj.visible = false;
       }
     });
-
-  gui.add(guiObject, "toTheMoon").name("To the Moon")
-  .listen().onChange(function(flag) {
-    if (flag) {
-      guiObject.toTheMoon = true;
-      camera.lookAt(1000,0,1000);
-    }
-    else {
-      guiObject.toTheMoon = false;
-      camera.lookAt(0,0,0);
-    }
-  });
 }
 
 function init() {

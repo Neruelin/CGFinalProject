@@ -375,7 +375,7 @@ export const SpaceObjects = {
     tilt: 0,
     day: 2332800,
     pos: {
-      x: 0,
+      x: 10000000,
       y: 0,
       z: 0
     },
