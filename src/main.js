@@ -1,28 +1,22 @@
 import {
-  AxesHelper,
   AmbientLight,
   BackSide,
   BoxBufferGeometry,
   Color,
   LinearFilter,
   Mesh,
-  MeshBasicMaterial,
   PerspectiveCamera,
   PointLight,
   Scene,
   ShaderLib,
   ShaderMaterial,
-  SphereBufferGeometry,
   TextureLoader,
   WebGLRenderer,
-  Vector3,
-  AxisHelper
-  // OrthographicCamera
+  Vector3
 } from "three";
 import * as dat from "dat.gui";
 import { OrbitControls } from "./OrbitControls";
 import { Lensflare, LensflareElement } from "./Lensflare";
-import STLLoader from "./STLLoader";
 import { Orbits, SpaceObjects } from "./ObjectsToCreate";
 import shapePipeline from "./ShapePipeline";
 
@@ -55,7 +49,8 @@ let scene,
       hundred: false,
       thousand: true,
       tenThousand: false
-    }
+    },
+    toTheMoon: false
   },
   sun,
   sunLight,
@@ -122,9 +117,6 @@ function initScene() {
   scene.background = new Color(background);
   scene.add(camera);
 
-  // let axes2 = new AxisHelper(1000000000);
-  // scene.add(axes2);
-
   let key;
   for (key of Object.keys(SpaceObjects)) {
     let obj = shapePipeline(SpaceObjects[key]);
@@ -137,6 +129,8 @@ function initScene() {
     objects.push(obj);
     scene.add(obj);
 
+    if(key == "Moon") continue;
+
     let div = createOverlayDiv(key);
     overlayDivs[key] = div;
     document.body.appendChild(overlayDivs[key]);
@@ -147,12 +141,6 @@ function initScene() {
     orbits.push(obj);
     scene.add(obj);
   }
-
-  // let loader = new STLLoader();
-  // loader.load("./assets/models/atlasv551.stl", function(geometry) {
-  //   let mat = new MeshBasicMaterial({ color: 0xffffff });
-  //   scene.add(new Mesh(geometry, mat));
-  // });
 
   const textureLoader = new TextureLoader();
 
@@ -234,7 +222,7 @@ function updateObjectPositions() {
     SpaceObjects[key].obj
       .rotateOnAxis(new Vector3(0, 1, 0), ((2*Math.PI) / SpaceObjects[key].day) * timeScale);
 
-    if (key == "Sun") continue;
+    if (key == "Sun" || key == "Moon") continue;
     let period = Orbits[key].dims.period;
 
     let pos = parametricEllipse(
@@ -275,6 +263,7 @@ function updateObjectPositions() {
 function updateOverlayPositions() {
   let key;
   for (key of Object.keys(SpaceObjects)) {
+    if(key == "Moon") continue;
     let pos = toScreenPosition(SpaceObjects[key].obj, camera);
     if (
       pos.x < renderer.getContext().canvas.width &&
@@ -397,6 +386,18 @@ function initGUI() {
           obj.visible = false;
       }
     });
+
+  gui.add(guiObject, "toTheMoon").name("To the Moon")
+  .listen().onChange(function(flag) {
+    if (flag) {
+      guiObject.toTheMoon = true;
+      camera.lookAt(1000,0,1000);
+    }
+    else {
+      guiObject.toTheMoon = false;
+      camera.lookAt(0,0,0);
+    }
+  });
 }
 
 function init() {

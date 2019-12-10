@@ -10,15 +10,11 @@ import {
   TextureLoader,
   Mesh,
   Line,
-  Points,
   EllipseCurve,
-  Vector2,
   sRGBEncoding,
   MeshBasicMaterial,
   Vector3,
   DoubleSide,
-  CylinderBufferGeometry,
-  RepeatWrapping
 } from "three";
 import shapes from "./Shapes";
 import { eccentricityFactor } from "./constants";
