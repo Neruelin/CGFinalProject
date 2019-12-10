@@ -17,7 +17,7 @@ import {
   DoubleSide,
 } from "three";
 import shapes from "./Shapes";
-import { eccentricityFactor } from "./constants";
+import { eccentricityFactor, scaleUp } from "./constants";
 
 function parametricEllipse(x = 0, y = 0, t, period, eccentricity) {
   let major = x + y;
@@ -37,7 +37,7 @@ export default function shapePipeline(spec) {
   switch (spec.type) {
     case shapes.sphere:
       geo = new SphereBufferGeometry(
-        spec.dims.actualRadius * 1000,
+        spec.dims.actualRadius * scaleUp,
         spec.dims.widthSegments,
         spec.dims.heightSegments
       );
@@ -64,10 +64,10 @@ export default function shapePipeline(spec) {
       break;
     case shapes.ellipse:
       let eccentricity = spec.dims.eccentricity | 0;
-      let major = spec.dims.aphelion + spec.dims.perihelion;
+      let major = (spec.dims.aphelion + spec.dims.perihelion) / 2;
       let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
       let curve = new EllipseCurve(
-        spec.dims.aphelion - spec.dims.perihelion,
+        (spec.dims.aphelion - spec.dims.perihelion),
         0,
         minor,
         major
@@ -86,6 +86,9 @@ export default function shapePipeline(spec) {
     obj.rotation.x = RightAngle;
     obj.rotation.y = spec.dims.OrbitalInclination * RadsPerDegree;
     obj.rotation.z = RightAngle;
+  } else if (spec.type == shapes.cube) {
+      let mat =new MeshBasicMaterial( {color: spec.color});
+      obj = new Mesh(geo, mat);
   } else {
     let texture = new TextureLoader().load(spec.texture);
     texture.encoding = sRGBEncoding;
@@ -95,15 +98,14 @@ export default function shapePipeline(spec) {
        let mat = new MeshBasicMaterial( {map:texture} );
        obj = new Mesh(geo, mat);
        obj.visible = false;
-       obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
     } else {
       let mat = new MeshStandardMaterial( {map:texture, metalness: 0.5, roughness: 1.0} );
       obj = new Mesh(geo, mat);
-      obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
+      obj.renderOrder = 3;
     }
 
     if (spec.texture == "./assets/textures/2k_saturn.jpg") {
-      let ringGeo = new RingGeometry(spec.rings.innerRad *1000, spec.rings.outerRad *1000, 32, 8);
+      let ringGeo = new RingGeometry(spec.rings.innerRad * scaleUp, spec.rings.outerRad * scaleUp, 32, 8);
       let ringTexture = new TextureLoader().load(spec.rings.texture);
       let ringMat = new MeshStandardMaterial( {map:ringTexture, metalness: 0.5, roughness: 1.0, side: DoubleSide} );
       let rings = new Mesh(ringGeo, ringMat);
@@ -114,5 +116,8 @@ export default function shapePipeline(spec) {
     obj.renderOrder = 3;
     obj.rotateOnAxis(new Vector3(0.0, 0.0, 1.0), -spec.tilt);
   }
+
+  if (spec.pos)
+    obj.position.set(spec.pos.x, spec.pos.y, spec.pos.z);
   return obj;
 }

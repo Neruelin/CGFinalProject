@@ -12,15 +12,26 @@ import {
   ShaderMaterial,
   TextureLoader,
   WebGLRenderer,
-  Vector3
+  Vector3,
+  MeshBasicMaterial,
+  SphereBufferGeometry,
 } from "three";
+import "./styles/app.css";
 import * as dat from "dat.gui";
 import { OrbitControls } from "./OrbitControls";
 import { Lensflare, LensflareElement } from "./Lensflare";
-import { Orbits, SpaceObjects } from "./ObjectsToCreate";
+import { Orbits, SpaceObjects, PhysicsObjects } from "./ObjectsToCreate";
 import shapePipeline from "./ShapePipeline";
 
-import { AU, radsPerSec, background, farOcclusionDistance } from "./constants";
+import { 
+  AU,
+  radsPerSec,
+  background,
+  farOcclusionDistance,
+  Gravity,
+  SpeedLimit,
+  scaleUp
+} from "./constants";
 
 let scene,
   camera,
@@ -28,15 +39,22 @@ let scene,
   controls,
   lockon,
   startTime = 81363000000000,
-  timeScale = 1000,
+  timeScale = 1,
+  lastTime = Date.now(),
   gui = new dat.GUI({autoPlace: true}),
   guiObject = {
     target: "",
     unlock: function() {
       setLockon("");
     },
+    clearMarkers: () => {
+      let marker;
+      for (marker of addedMarkers) {
+        scene.remove(marker);
+      }
+    },
     lockonDistance: 20,
-    timeScale: timeScale,
+    //timeScale: timeScale,
     coldSun: false,
     showOrbits: true,
     sizeScales: {
@@ -45,17 +63,21 @@ let scene,
     },
     timeScales: {
       stopped: false,
-      real: false,
+      real: true,
       hundred: false,
-      thousand: true,
+      thousand: false,
       tenThousand: false
-    }
+    },
+    ShowFullTelemetry: false,
+    placeMarkers: true
   },
   sun,
   sunLight,
   objects = [],
   orbits = [],
+  addedMarkers = [],
   overlayDivs = [];
+
 
 function initControls() {
   controls = new OrbitControls(camera, renderer.domElement);
@@ -68,7 +90,7 @@ function initCamera() {
     0.1,
     farOcclusionDistance
   );
-  camera.position.set(0, 500000, 0);
+  camera.position.set(0, AU, 0);
   camera.lookAt(0, 0, 0);
 
   window.addEventListener("resize", onWindowResize, false);
@@ -90,7 +112,7 @@ function initRenderer() {
 }
 
 function parametricEllipse(x = 0, y = 0, t, period, eccentricity) {
-  let major = x + y;
+  let major = (x + y)/ 2;
   let minor = major * Math.sqrt(1 - Math.pow(eccentricity, 2));
 
   return {
@@ -103,11 +125,10 @@ function createOverlayDiv(key) {
   let div = document.createElement("div");
   div.appendChild(document.createTextNode(key));
   div.id = key;
+  div.className = "Overlay";
   div.onclick = e => {
     setLockon(key);
   };
-  div.style.cssText =
-    "position: absolute; top: 0px; left: 0px; border: 1px solid green; color: green; background-color: rgba(1,1,1,0.2);";
   return div;
 }
 
@@ -122,8 +143,8 @@ function initScene() {
     SpaceObjects[key].obj = obj;
     obj.name = key;
 
-    if (obj.name == "Sun")
-      obj.scale.set(0.075, 0.075, 0.075);
+    if (key == "Sun")
+      obj.scale.set(0.0075, 0.0075, 0.0075);
 
     objects.push(obj);
     scene.add(obj);
@@ -137,6 +158,18 @@ function initScene() {
     let obj = shapePipeline(Orbits[key]);
     orbits.push(obj);
     scene.add(obj);
+  }
+
+  for (key of Object.keys(PhysicsObjects)) {
+    let obj = shapePipeline(PhysicsObjects[key]);
+    PhysicsObjects[key].obj = obj;
+    objects.push(obj);
+    scene.add(obj);
+    let div = createOverlayDiv(key);
+    overlayDivs[key] = div;
+    console.log(key);
+    addMarkerTracking(key);
+    document.body.appendChild(overlayDivs[key]);
   }
 
   const textureLoader = new TextureLoader();
@@ -174,7 +207,7 @@ function initScene() {
 
   shaderMat.uniforms.tEquirect.value = skyTexture;
 
-  const plane = new BoxBufferGeometry(1000000000, 1000000000, 1000000000);
+  const plane = new BoxBufferGeometry(200 * AU, 200 * AU, 200 * AU);
   sky = new Mesh(plane, shaderMat);
   scene.add(sky);
 }
@@ -230,6 +263,8 @@ function updateObjectPositions() {
       Orbits[key].dims.eccentricity | 0
       );
 
+    let oldPosition = SpaceObjects[key].obj.position.clone();
+    
     SpaceObjects[key].obj.position.y =
       pos.x * Math.sin((Orbits[key].dims.OrbitalInclination * Math.PI) / 180);
 
@@ -238,8 +273,24 @@ function updateObjectPositions() {
 
     SpaceObjects[key].obj.position.z =
       pos.y + Orbits[key].dims.aphelion - Orbits[key].dims.perihelion;
+    
+    SpaceObjects[key].velocity = new Vector3()
+      .subVectors(oldPosition, SpaceObjects[key].obj.position)
+      .divideScalar(lastTime - Date.now())
+      .multiplyScalar(timeScale);
   }
+}
 
+function addMarkerTracking (key) {
+  setInterval(() => {
+    let a = PhysicsObjects[key].obj.position;
+    if (guiObject.placeMarkers) {
+      addedMarkers.push(addAt(a.x, a.y, a.z, PhysicsObjects[key].color));
+    }
+  }, 1000);
+}
+
+function updateCameraPosition () {
   if (lockon in SpaceObjects) {
     let v1 = camera.position.clone();
     let v2 = SpaceObjects[lockon].obj.position.clone();
@@ -247,9 +298,23 @@ function updateObjectPositions() {
     let norm = obj2cam.normalize();
     let dist;
     if (guiObject.sizeScales.scaledup)
-      dist = SpaceObjects[lockon].dims.actualRadius * 1000 * guiObject.lockonDistance;
+      dist = SpaceObjects[lockon].dims.actualRadius * scaleUp * guiObject.lockonDistance;
     else
       dist = SpaceObjects[lockon].dims.actualRadius * guiObject.lockonDistance;
+    let nXd = new Vector3(norm.x * dist, norm.y * dist, norm.z * dist);
+    let final = new Vector3(nXd.x + v2.x, nXd.y + v2.y, nXd.z + v2.z);
+    camera.position.set(final.x, final.y, final.z);
+    controls.target = new Vector3(v2.x, v2.y, v2.z);
+  } else if (lockon in PhysicsObjects) {
+    let v1 = camera.position.clone();
+    let v2 = PhysicsObjects[lockon].obj.position.clone();
+    let obj2cam = new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+    let norm = obj2cam.normalize();
+    let dist;
+    if (guiObject.sizeScales.scaledup)
+      dist = PhysicsObjects[lockon].dims.actualRadius * scaleUp * guiObject.lockonDistance;
+    else
+      dist = PhysicsObjects[lockon].dims.actualRadius * guiObject.lockonDistance;
     let nXd = new Vector3(norm.x * dist, norm.y * dist, norm.z * dist);
     let final = new Vector3(nXd.x + v2.x, nXd.y + v2.y, nXd.z + v2.z);
     camera.position.set(final.x, final.y, final.z);
@@ -275,16 +340,133 @@ function updateOverlayPositions() {
       pos.y = 0;
     }
 
+    if (key !== "Sun") {
+      overlayDivs[key].innerText = key;
+      if (guiObject.ShowFullTelemetry) {
+        overlayDivs[key].innerText +=
+          "\n" +
+          (SpaceObjects[key].obj.position.x / AU).toPrecision(2) +
+          "AU\n" +
+          (SpaceObjects[key].obj.position.y / AU).toPrecision(2) +
+          "AU\n" +
+          (SpaceObjects[key].obj.position.z / AU).toPrecision(2) +
+          "AU\n" +
+          (SpaceObjects[key].obj.position.length() / AU).toPrecision(2) +
+          "AU\n" +
+          (SpaceObjects[key].velocity.x / 1000).toPrecision(5) +
+          " Km/s\n" +
+          (SpaceObjects[key].velocity.y / 1000).toPrecision(5) +
+          " Km/s\n" +
+          (SpaceObjects[key].velocity.z / 1000).toPrecision(5) +
+          " Km/s\n" +
+          (SpaceObjects[key].velocity.length() / 1000).toPrecision(5) +
+          " Km/s";
+      }
+    }
+
+    overlayDivs[key].style.transform = `translate(-50%, -50%) translate(${
+      pos.x
+    }px,${pos.y - 10}px)`;
+  }
+
+  for (key of Object.keys(PhysicsObjects)) {
+    let pos = toScreenPosition(PhysicsObjects[key].obj, camera);
+    if (
+      pos.x < renderer.getContext().canvas.width &&
+      pos.x >= 0 &&
+      pos.y < renderer.getContext().canvas.height &&
+      pos.y >= 0
+    ) {
+      overlayDivs[key].style.visibility = "visible";
+    } else {
+      overlayDivs[key].style.visibility = "hidden";
+      pos.x = 0;
+      pos.y = 0;
+    }
+    overlayDivs[key].innerText = key;
+    if (guiObject.ShowFullTelemetry) {
+
+      overlayDivs[key].innerText +=
+        "\n" +
+        (PhysicsObjects[key].obj.position.x / AU).toPrecision(2) +
+        "AU\n" +
+        (PhysicsObjects[key].obj.position.y / AU).toPrecision(2) +
+        "AU\n" +
+        (PhysicsObjects[key].obj.position.z / AU).toPrecision(2) +
+        "AU\n" +
+        (PhysicsObjects[key].obj.position.length() / AU).toPrecision(2) +
+        "AU\n" +
+        (PhysicsObjects[key].velocity.x / 1000).toPrecision(5) +
+        " Km/s\n" +
+        (PhysicsObjects[key].velocity.y / 1000).toPrecision(5) +
+        " Km/s\n" +
+        (PhysicsObjects[key].velocity.z / 1000).toPrecision(5) +
+        " Km/s\n" +
+        (PhysicsObjects[key].velocity.length() / 1000).toPrecision(5) +
+        " Km/s";
+    }
+
     overlayDivs[key].style.transform = `translate(-50%, -50%) translate(${
       pos.x
     }px,${pos.y - 10}px)`;
   }
 }
 
+function calcGravForce(obj) {
+  let force = new Vector3();
+  let key;
+  for (key of Object.keys(SpaceObjects)) {
+    let SpaceObject = SpaceObjects[key];
+    let v1 = SpaceObject.obj.position.clone();
+    let v2 = obj.obj.position.clone();
+    let dirVec = new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+    let mag =
+      (Gravity * SpaceObject.dims.mass * obj.dims.mass) / dirVec.length() ** 2;
+    if (mag > SpeedLimit) mag = SpeedLimit;
+    force.addScaledVector(dirVec.normalize(), mag);
+  }
+  return force;
+}
+
+function calcVelocity(accel, time) {
+  return accel * time;
+}
+
+function calcDisplacement(oldvelocity, newvelocity, accel, time) {
+  let velocity = (oldvelocity + newvelocity) / 2;
+
+  return (velocity + 0.5 * accel * time) * time;
+}
+
+function updatePhysicsObjectPositions() {
+  let delta = (timeScale * (Date.now() - lastTime)) / 1000;
+  lastTime = Date.now();
+  let key;
+  for (key of Object.keys(PhysicsObjects)) {
+    let displacement = new Vector3();
+    let GravForce = calcGravForce(PhysicsObjects[key]);
+    let dim;
+    for (dim of ["x", "y", "z"]) {
+      let vel =
+        PhysicsObjects[key].velocity[dim] + calcVelocity(GravForce[dim], delta);
+      displacement[dim] = calcDisplacement(
+        PhysicsObjects[key].velocity[dim],
+        vel,
+        GravForce[dim],
+        delta
+      );
+      PhysicsObjects[key].velocity[dim] = vel;
+    }
+    PhysicsObjects[key].obj.position.add(displacement);
+  }
+}
+
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
   updateObjectPositions();
+  updatePhysicsObjectPositions();
+  controls.update();
+  updateCameraPosition();
   updateOverlayPositions();
   renderer.render(scene, camera);
 }
@@ -294,6 +476,13 @@ function initGUI() {
   folder.add(guiObject, "target").onChange(setLockon).name("Target");
   folder.add(guiObject, "lockonDistance", 0.001, 25.0, 0.001).name("Zoom");
   folder.add(guiObject, "unlock").name("Unlock");
+
+  let markerFolder = gui.addFolder("Marker");
+  markerFolder.add(guiObject, "placeMarkers");
+  markerFolder.add(guiObject, "clearMarkers");
+
+  let metricsFolder = gui.addFolder("Telemetry");
+  metricsFolder.add(guiObject, "ShowFullTelemetry");
   
   let timeFolder = gui.addFolder("Time Controls");
   timeFolder.add(guiObject.timeScales, 'stopped').name('Stopped')
@@ -395,7 +584,7 @@ function init() {
 }
 
 function setLockon(target) {
-  if (target && target in SpaceObjects) {
+  if (target && (target in SpaceObjects || target in PhysicsObjects)) {
     lockon = target;
     console.log("Locked on " + target);
   } else {
@@ -406,4 +595,45 @@ function setLockon(target) {
   }
 }
 
+function addAt(x, y, z, col = 0xff0000) {
+  let geo = new SphereBufferGeometry(0.01 * AU, 10, 10);
+  let mat = new MeshBasicMaterial({ color: col });
+  let mesh = new Mesh(geo, mat);
+  mesh.position.set(x, y, z);
+  mesh.renderOrder = 10;
+  scene.add(mesh);
+  return mesh;
+}
+
+function createProbe(pos, vel, color, name) {
+  PhysicsObjects[name] = {
+    type: Shapes.cube,
+    dims: {
+      size: 30,
+      radius: 30,
+      mass: 500
+    },
+    velocity: vel,
+    pos: {
+      x: pos.x,
+      y: pos.y,
+      z: pos.z
+    },
+    color: color
+  };
+  PhysicsObjects[name].obj = shapePipeline(PhysicsObjects[name]);
+  overlayDivs[name] = createOverlayDiv(name);
+  document.body.appendChild(overlayDivs[name]);
+  scene.add(PhysicsObjects[name].obj);
+
+  setInterval(() => {
+    let a = PhysicsObjects[name].obj.position;
+    if (guiObject.placeMarkers) {
+      addedMarkers.push(addAt(a.x, a.y, a.z, color));
+    }
+  }, 5000);
+}
+
 init();
+
+console.log(PhysicsObjects);
